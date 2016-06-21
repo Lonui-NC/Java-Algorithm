@@ -1823,6 +1823,42 @@ class StackTest {
     	return flag;
     }
     
+    
+    
+    //在不使用额外数据的情况下，翻转字符串
+    public String reverseString(String iniString) {
+    	if(iniString==null || iniString.length()==0)
+    		return iniString;
+        // write code here
+    	int len=iniString.length();
+    	char[] c=iniString.toCharArray();
+    	char t;
+    	for(int i=0;i<c.length/2;i++)
+    	{
+    		t=c[i];
+    		c[i]=c[len-i-1];
+    		c[len-i-1]=t;
+    	}
+    	//对应的String 生成方式
+    	return new String(c);
+    }
+    
+    
+    //计算字符串
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 	public static void main(String[] args) throws Exception {
 //		// TODO Auto-generated method stub
 //		Main mtest=new Main();

@@ -32,7 +32,63 @@ public class Main {
 			
 			
 		}
+		
+		//最后一个字符的长度//
+		Scanner scanner=new Scanner(System.in);
+		int len=0;
+		while(scanner.hasNext())
+		{
+			len=LengthOfLast(scanner.next());
+		}
+		System.out.println(len);
+		
+		
+		
+		
+		
+		
+		
 	}
+	
+	//输入字符最后一个单词的长度
+	public static int LengthOfLast(String str)
+	{
+		if(str==null || str.length()==0)
+			return 0;
+		else
+			return str.length();
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	//操作执行处理函数
 	private static void process(String c,int A,int B,int[] score){
 		int begin,end;
