@@ -3,10 +3,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
@@ -1844,13 +1845,104 @@ class StackTest {
     }
     
     
-    //计算字符串
+    //num1,num2分别为长度为1的数组。传出参数
+    //将num1[0],num2[0]设置为返回结果
+    //计算数组中的不一样元素，一共两个
+    public void FindNumsAppearOnce(int [] array,int num1[] , int num2[]) {
+        int temp=0;
+        if(array==null || array.length==0)
+        {
+        	return ;
+        }
+        if(array.length==1)
+        {
+        	num1[0]=0;
+        	num2[0]=0;
+        	return;
+        }
+        for(int i=0;i<array.length;i++)
+        {
+        	temp=array[i]^temp;
+        }
+        //可以让对应的temp仅与1按位与，可得对应的是！！！
+        //或者x&（-（x-1））
+        int s1=temp;
+        int bit=0;
+        int n1=0,n2=0;
+        while((s1&1)==0)
+        {
+        	s1=s1>>1;
+        	bit++;
+        }
+        for(int i=0;i<array.length;i++)
+        {
+        	if(((array[i]>>bit)&1)!=0)
+        	{
+        		n1=n1^array[i];
+        	}
+        	else
+        	{
+        		n2=n2^array[i];
+        	}
+        }
+        num1[0]=n1;
+        num2[0]=n2;
+    }
     
+    //按字典顺序打印出字符的所有排列
+//    public ArrayList<String> Permutation(String str) {
+//        ArrayList<String> result=new ArrayList<String>();
+//        if(str==null || str.length()==0)
+//        	return result;
+//        char[]t=str.toCharArray();
+//        Arrays.sort(t);
+//        for(int i=0;i<t.length;i++)
+//        {
+//        	char f=t[i];
+//        	//String b=new String()
+//        }
+//    }
+     
+    public ArrayList<String> Permutation(String str) {
+        ArrayList<String> re=new ArrayList<String>();
+        if(str==null || str.length()==0)
+        	return re;
+        HashSet<String> set=new HashSet<String>();
+        //调用函数初始化
+        fun(set,str.toCharArray(),0);
+        re.addAll(set);
+        //最后再sort，前面直接全排列即可
+        Collections.sort(re);
+        return re;
+     }
     
-    
-    
-    
-    
+     void fun(HashSet<String> re,char[] str,int k){
+    	 if(k==str.length){
+    		 re.add(new String(str));
+    		 return;
+    	 }
+    	 //假设从第0步开始，
+    	 //首先是0，然后调用递归，是1，
+    	 //最先加入的是第一个，全的
+    	 //然后后面的回溯到上一步，
+    	 //上一步为len-1,变为len,则交换后面两个的位置，再换回来
+    	 //然后是len-2,变为len-1，交换（最后-1）两个的位置，进入len-1，交换了最后两个的位置即ab，ba都有
+    	 //设置对应为....abc时，就是，先交换得到bac,然后交换得到...bca,再交换得到cba,cab,
+    	 for(int i=k;i<str.length;i++){
+    		 //对应实现交换和函数递归
+    		 swap(str,i,k);
+    		 fun(re,str,k+1);
+    		 swap(str,i,k);
+    	 }
+     }
+     
+     void swap(char[] str,int i,int j){
+    	 if(i!=j){
+    		 char t=str[i];
+    		 str[i]=str[j];
+    		 str[j]=t;
+    	 }
+     }
     
     
     
