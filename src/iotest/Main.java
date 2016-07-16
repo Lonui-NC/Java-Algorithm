@@ -1,5 +1,9 @@
 package iotest;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Scanner;
+import java.util.Set;
+
 //专门用来写IO的输入信息
 public class Main {
 
@@ -42,8 +46,9 @@ public class Main {
 		}
 		System.out.println(len);
 		
-		
-		
+		Set<Integer> set=new HashSet<Integer>();
+		set.add(1);
+		Iterator<Integer> it=set.iterator();
 		
 		
 		

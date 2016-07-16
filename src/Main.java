@@ -2007,9 +2007,138 @@ class StackTest {
      
      
      
+     //丑数，求按从小到大的第n个丑数
+     //最简单的方法是遍历
+     public int GetUglyNumber_Solution(int index) {
+    	int x=0;
+    	if(index==1)
+    		return 1;
+    	else if(index<=0)
+    		return 0;
+    	// 此处组合情况不宜讨论，重新做！
+// 		for(int i=2;i<0xffff;i++)
+// 		{
+// 			//第一个全为2
+// 			//判断其是否是整数
+// 			if((Math.log(i)/Math.log(2*3*5))==(int)(Math.log(i)/Math.log(2*3*5)))
+// 				index--;
+// 			else if((Math.log(i)/Math.log(2))==(int)(Math.log(i)/Math.log(2)))
+// 				index--;
+// 			else if((Math.log(i)/Math.log(3))==(int)(Math.log(i)/Math.log(3)))
+// 				index--;
+// 			else if((Math.log(i)/Math.log(5))==(int)(Math.log(i)/Math.log(5)))
+// 				index--;
+// 			else if((Math.log(i)/Math.log(2*3))==(int)(Math.log(i)/Math.log(2*3)))
+// 				index--;
+// 			else if((Math.log(i)/Math.log(2*5))==(int)(Math.log(i)/Math.log(2*5)))
+// 				index--;
+// 			else if((Math.log(i)/Math.log(3*5))==(int)(Math.log(i)/Math.log(3*5)))
+// 				index--;
+// 			if(index==1)
+// 				return i;
+// 	   
+// 		}
+//    	return 0;
+    	
+//    	//java解法1
+//    	int res[] =new int[index];
+//    	ArrayList<Integer> u2=new ArrayList<Integer>();
+//    	ArrayList<Integer> u3=new ArrayList<Integer>();
+//    	ArrayList<Integer> u5=new ArrayList<Integer>();
+//    	
+//    	int temp=1;
+//    	u2.add(temp);
+//    	int num=0;
+//    	
+//    	while(num<index){
+//    		if(!u2.contains(2*temp))
+//    			u2.add(2*temp);
+//    		if(!u3.contains(3*temp))
+//    			u3.add(3*temp);
+//    		if(!u5.contains(5*temp))
+//    			u5.add(5*temp);
+//    		temp=findMin(u2.get(0),u3.get(0),u5.get(0));
+//    		if(num==0){
+//    			res[num]=temp;
+//    			num++;
+//    		}
+//    		if(num>=1 && res[num-1]!=temp){
+//    			//此时肯定是从前面过来的，2，3, 5 对应的新下标
+//    			//防止可能存在相同，如2*3
+//    			res[num]=temp;
+//    			num++;
+//    		}
+//    		//每次取的都是最开始的地方
+//    		//如果其中一个数取到了，相互乘过，那么就把这个数移除，不再取
+//    		//相当于每次保留的方法
+//    		if(temp==u2.get(0)){
+//    			u2.remove(0);
+//    		}
+//    		else if(temp==u3.get(0)){
+//    			u3.remove(0);
+//    		}
+//    		else
+//    		{
+//    			u5.remove(0);
+//    		}
+//    	}
+    	
+    	//方法不好，不易写
+    	//
+    	
+    	//java 解法2
+    	/*
+    	说下思路，如果p是丑数，那么p=2^x * 3^y * 5^z
+    	那么只要赋予x,y,z不同的值就能得到不同的丑数。
+    	如果要顺序找出丑数，要知道下面几个特（fei）点（hua）。
+    	对于任何丑数p：
+    	（一）那么2*p,3*p,5*p都是丑数，并且2*p<3*p<5*p
+    	（二）如果p<q, 那么2*p<2*q,3*p<3*q,5*p<5*q
+    	现在说说算法思想：
+    	    由于1是最小的丑数，那么从1开始，把2*1，3*1，5*1，进行比较，得出最小的就是1
+    	的下一个丑数，也就是2*1，
+    	    这个时候，多了一个丑数‘2’，也就又多了3个可以比较的丑数，2*2，3*2，5*2，
+    	这个时候就把之前‘1’生成的丑数和‘2’生成的丑数加进来也就是
+    	(3*1,5*1,2*2，3*2，5*2)进行比较，找出最小的。。。。如此循环下去就会发现，
+    	每次选进来一个丑数，该丑数又会生成3个新的丑数进行比较。
+    	    上面的暴力方法也应该能解决，但是如果在面试官用这种方法，估计面试官只会摇头吧
+    	。下面说一个O（n）的算法。
+    	    在上面的特（fei）点（hua）中，既然有p<q, 那么2*p<2*q，那么
+    	“我”在前面比你小的数都没被选上，你后面生成新的丑数一定比“我”大吧，那么你乘2
+    	生成的丑数一定比我乘2的大吧，那么在我选上之后你才有机会选上。
+    	其实每次我们只用比较3个数：用于乘2的最小的数、用于乘3的最小的数，用于乘5的最小的
+    	数。也就是比较(2*x , 3*y, 5*z) ，x>=y>=z的，
+    	重点说说下面代码中p的作用：int p[] = new int[] { 0, 0, 0 }; p[0]表示最小用于
+    	乘2比较数在数组a中的【位置】。 */
+    	
+    	final int d[]={2,3,5};
+    	int a[]=new int[index];
+    	a[0]=1;
+    	int p[]=new int[]{0,0,0};
+    	int num[]=new int[]{2,3,5};
+    	int cur=1;
+    	
+    	//序号表明顺序
+    	while(cur<index){
+    		int m=findMin(num[0],num[1],num[2]);
+    		//这个数要比前面的大，否则只是单纯的更新下标而已，防止相等
+    		if(a[cur-1]<num[m])
+    			a[cur++]=num[m];
+    		//此处更新丑数的下标值
+    		p[m]+=1;
+    		//此处更新对应的待选丑数的值，前面已经把丑数放到最终的丑数集合里面，如果需要有的话
+    		num[m]=a[p[m]]*d[m];
+    	}
+    	return a[index-1];
+    	
+    	
+     }
      
-     
-     
+     private int findMin(int num2,int num3,int num5)
+     {
+    	 int min=Math.min(num2, Math.min(num3, num5));
+    	 return min==num2?0:min==num3?1:2;
+     }
      
      
      
@@ -2022,6 +2151,17 @@ class StackTest {
     
     
     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
     
     
     
@@ -2092,38 +2232,69 @@ class StackTest {
 //		String test="hellooo";
 //		System.out.println(test);
 //		System.out.println(mtest.LeftRotateString(test, 3));
-		RandomListNode test=mtest.new RandomListNode(1);
-		test.next=mtest.new RandomListNode(2);
-		test.random=mtest.new RandomListNode(3);
-		test.next.next=test.random;
-		test.next.random=test;
-		test.next.next.next=null;
-		test.next.next.random=test.next;
-		RandomListNode head=test;
-		while(test!=null)
+//		RandomListNode test=mtest.new RandomListNode(1);
+//		test.next=mtest.new RandomListNode(2);
+//		test.random=mtest.new RandomListNode(3);
+//		test.next.next=test.random;
+//		test.next.random=test;
+//		test.next.next.next=null;
+//		test.next.next.random=test.next;
+//		RandomListNode head=test;
+//		while(test!=null)
+//		{
+//			System.out.println("test:"+test.label);
+//			if(test.next!=null)
+//				System.out.println("test.next:"+test.next.label);
+//			if(test.random!=null)
+//				System.out.println("test.random:"+test.random.label);
+//			System.out.println();
+//			test=test.next;
+//		}
+//		RandomListNode result;
+//		
+//		System.out.println("after:::");
+//		System.out.println("head:"+head.label);
+//		result=mtest.Clone(head);
+//		while(head!=null)
+//		{
+//			System.out.println("test:"+head.label);
+//			if(head.next!=null)
+//				System.out.println("test.next:"+head.next.label);
+//			if(head.random!=null)
+//				System.out.println("test.random:"+head.random.label);
+//			head=head.next;
+//		}
+		int x=0;
+		for(int i=0;i<100;i++)
 		{
-			System.out.println("test:"+test.label);
-			if(test.next!=null)
-				System.out.println("test.next:"+test.next.label);
-			if(test.random!=null)
-				System.out.println("test.random:"+test.random.label);
-			System.out.println();
-			test=test.next;
+			//第一个全为2
+			//判断其是否是整数
+			if((Math.log(i)/Math.log(2*3*5))==(int)(Math.log(i)/Math.log(2*3*5)))
+				System.out.println(i);
+			else if((Math.log(i)/Math.log(2))==(int)(Math.log(i)/Math.log(2)))
+				System.out.println(i);
+			else if((Math.log(i)/Math.log(3))==(int)(Math.log(i)/Math.log(3)))
+				System.out.println(i);
+			else if((Math.log(i)/Math.log(5))==(int)(Math.log(i)/Math.log(5)))
+				System.out.println(i);
+			else if((Math.log(i)/Math.log(2*3))==(int)(Math.log(i)/Math.log(2*3)))
+				System.out.println(i);
+			else if((Math.log(i)/Math.log(2*5))==(int)(Math.log(i)/Math.log(2*5)))
+				System.out.println(i);
+			else if((Math.log(i)/Math.log(3*5))==(int)(Math.log(i)/Math.log(3*5)))
+				System.out.println(i);
+	   
 		}
-		RandomListNode result;
 		
-		System.out.println("after:::");
-		System.out.println("head:"+head.label);
-		result=mtest.Clone(head);
-		while(head!=null)
-		{
-			System.out.println("test:"+head.label);
-			if(head.next!=null)
-				System.out.println("test.next:"+head.next.label);
-			if(head.random!=null)
-				System.out.println("test.random:"+head.random.label);
-			head=head.next;
-		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 	}
 	
