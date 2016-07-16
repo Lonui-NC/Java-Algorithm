@@ -2140,9 +2140,7 @@ class StackTest {
     	 return min==num2?0:min==num3?1:2;
      }
      
-     
-     
-     
+ 
      
      
      
