@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -753,24 +754,25 @@ class StackTest {
 		
 	}
 	
-	//寻找数组中的逆序对
-	public int InversePairs(int [] array) {
-		//会有跨越的情况发生
-		int sum=0;
-		
-		if(array==null || array.length==0)
-			return sum;
-        for(int i=0;i<array.length-1;i++)
-        {
-        	for(int j=i+1;j<array.length;j++)
-        	{
-        		if(array[j]<array[i])
-        			sum++;
-        	}
-        }
-        return sum;
-        
-    }
+	//算法复杂对过大
+//	//寻找数组中的逆序对
+//	public int InversePairs(int [] array) {
+//		//会有跨越的情况发生
+//		int sum=0;
+//		
+//		if(array==null || array.length==0)
+//			return sum;
+//        for(int i=0;i<array.length-1;i++)
+//        {
+//        	for(int j=i+1;j<array.length;j++)
+//        	{
+//        		if(array[j]<array[i])
+//        			sum++;
+//        	}
+//        }
+//        return sum;
+//        
+//    }
 	
 	
 	class Test
@@ -2141,11 +2143,110 @@ class StackTest {
      }
      
  
+     //输入数组的最小数
+     //巧妙使用comparable接口以及自定义的sort与排序
+     public String PrintMinNumber(int [] numbers) {
+    	 
+    	 if(numbers==null || numbers.length==0)
+    		 return null;
+    	 int n;
+    	 String s="";
+    	 ArrayList<Integer> list=new ArrayList<Integer>();
+    	 n=numbers.length;
+    	 //现将对应所有字符输入到Arraylist中
+    	 for(int i=0;i<n;i++){
+    		 list.add(numbers[i]);
+    	 }
+    	 //实现Compare方法，对应完成实现比较
+    	 Collections.sort(list,new Comparator<Integer>(){
+    		 
+    		 public int compare(Integer str1,Integer str2){
+    			 String s1=str1+""+str2;
+    			 String s2=str2+""+str1;
+    			 return s1.compareTo(s2);
+    		 }
+    	 });
+    	 
+    	 for(int j:list){
+    		 s+=j;
+    	 }
+    	 return s;
+    	 
+     }
      
      
+     //
+     /*归并排序的改进，把数据分成前后两个数组(递归分到每个数组仅有一个数据项)，
+     合并数组，合并时，出现前面的数组值array[i]大于后面数组值array[j]时；则前面
+     数组array[i]~array[mid]都是大于array[j]的，count += mid+1 - i
+     参考剑指Offer，但是感觉剑指Offer归并过程少了一步拷贝过程。
+     还有就是测试用例输出结果比较大，对每次返回的count mod(1000000007)求余
+     */
+     //求数组中的逆序对，采用递归方法实现，出现对应的i>j;表明其实i
+     public int InversePairs(int [] array) {
+         if(array==null || array.length==0)
+         {
+        	 return 0;
+         }
+         int[] copy=new int[array.length];
+         for(int i=0;i<array.length;i++)
+         {
+        	 copy[i]=array[i];
+         }
+         int count=InversePairsCore(array,copy,0,array.length-1)%1000000007;//数值过大求余
+         return count;
+     }
      
-     
-     
+     private int InversePairsCore(int[] array,int[] copy,int low,int high)
+     {
+    	 if(low==high)
+    	 {
+    		 return 0;
+    	 }
+    	 //其实对应有两个数组，另外有一个数组表明当前节点值前面的逆序对或顺序对的个数
+    	 int mid=(low+high)>>1;
+         int leftCount=InversePairsCore(array,copy,low,mid)%1000000007;
+         int rightCount=InversePairsCore(array,copy,mid+1,high)%1000000007;
+         int count=0;
+         int i=mid;
+         int j=high;
+         int locCopy=high;
+         while(i>=low&&j>mid)
+         {
+        	 //如果前面的数比后面的大，逆序对
+        	 //在进行内部过程中，大的放到了右边，小的放到了左边，完成了排序
+        	 if(array[i]>array[j])
+        	 {
+        		 count+=j-mid;//其实对应为j+1-(mid+1)
+        		 copy[locCopy--]=array[i--];
+        		 if(count>1000000007)//数组过大求余数
+        		 {
+        			 count%=1000000007;
+        		 }
+        	 }
+        	 else
+        	 {
+        		 copy[locCopy--]=array[j--];
+        	 }
+         }
+         //如果有一方排序完，即其中一组数比另一组都大或小，那么将另一组（此时有序的值复制进去）
+         //如果左边一个数大于右边最大的，那么右边所有的数都比左边小
+         
+         for(;i>=low;i--)
+         {
+        	 copy[locCopy--]=array[i];
+         }
+         for(;j>mid;j--)
+         {
+        	 copy[locCopy--]=array[j];
+         }
+         //此时在小的组内，对应是有序的
+         for(int s=low;s<=high;s++)
+         {
+        	 array[s]=copy[s];
+         }
+         return (leftCount+rightCount+count)%1000000007;
+     }
     
     
     
