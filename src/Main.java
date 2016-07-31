@@ -1,5 +1,6 @@
 
 import java.io.BufferedReader;
+import java.util.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -2250,6 +2251,27 @@ class StackTest {
     
     
     
+     //返回大写字母和空格
+     public void GetUpperString()
+     {
+    	 Scanner s=new Scanner(System.in);
+    	 char c;
+    	 String in="";
+    	 String res="";
+    	 while(s.hasNext())
+    	 {
+    		in=s.nextLine();
+    		for(int i=0;i<in.length();i++)
+    		{
+    			c=in.charAt(i);
+    			if((c>='A' && c<='Z') || c==' ')
+    				res+=c;
+    		}
+    		
+    	 }
+    	 System.out.print(res);
+    	 
+     }
      
      
      
