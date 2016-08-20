@@ -2273,8 +2273,88 @@ class StackTest {
     	 
      }
      
+     //字符串转整数
+     //parse 从语法上分析解析
+     //parse Int 转int
+     public int StrToInt(String str) {
+    	if(str==null || str.equals(""))
+    		return 0;
+    	char[] a=str.toCharArray();
+    	int flag=0;
+    	if(a[0]=='-')
+    		flag=1;
+    	int sum=0;
+    	for(int i=flag;i<a.length;i++){
+    		if(a[i]=='+')
+    			continue;
+    		if(a[i]<'0' || a[i]>'9')
+    			return 0;
+    		else
+    			sum=sum*10+(a[i]-'0');
+    	}
+    	return flag==0 ? sum:sum*(-1);
+     }
      
-     
+     //删除重复的节点，排序节点
+     public ListNode deleteDuplication(ListNode pHead)
+     {
+//    	 if(pHead==null)
+//    		 return pHead;
+//    	 ListNode h=null;
+//    	 ListNode next;
+//    	 ListNode t;
+//    	 ListNode pre;
+//    	 while(pHead.next!=null && pHead!=null){
+//    		 next=pHead.next;
+//    		 if(pHead.val==next.val)
+//    		 {
+//    			 t=next.next;
+//    			 pHead=t;
+//    		 }
+//    		 else
+//    		 {
+//    			 if(h==null)
+//    				 h=pHead;
+//    			 else
+//    				 h.next=pHead;
+//    			 pHead=next;
+//    		 }
+//    	 }
+//    	 return h;
+    	 
+    	 
+    	 ListNode first=new ListNode(-1);
+    	 first.next=pHead;
+    	 ListNode p=pHead;
+    	 ListNode last=first;
+    	 
+    	 //一次性把所有值全判断一遍
+    	 //这里的设计是为了判断重复和空值
+    	 //若一开始就是有重复1111122
+    	 //first=last,一直到最后的null或非null的值，头是first.next
+    	 //否则,last=p,并不改变,此时第一个不重复，不做改变
+    	 //下一个
+    	 while(p!=null && p.next!=null){
+    		 if(p.val==p.next.val){
+    			 int val=p.val;
+    			 while(p!=null && p.val==val)
+    				 p=p.next;
+    			 last.next=p;//此时p是没有重复的第一个//有错就在里面
+    		 }
+    		 else{
+    			 //若后面都没有重复依次进行，因为此时first.next 就是pHead的第一个
+    			 //后面如果有重复，那么因为前面的last里都是没有重复的，所以里面的不改变
+    			 //每次更新后last.next都是新的，原因在于没有重复不用更新对原来序列做修改
+    			 //当且仅当重复时才做修改和更新，last.next=p;
+    			 last=p;
+    			 p=p.next;
+    		 }
+    	 }
+    	 return first.next;
+    	 
+    	 
+    		 
+     }
      
      
      
@@ -2385,28 +2465,30 @@ class StackTest {
 //				System.out.println("test.random:"+head.random.label);
 //			head=head.next;
 //		}
-		int x=0;
-		for(int i=0;i<100;i++)
-		{
-			//第一个全为2
-			//判断其是否是整数
-			if((Math.log(i)/Math.log(2*3*5))==(int)(Math.log(i)/Math.log(2*3*5)))
-				System.out.println(i);
-			else if((Math.log(i)/Math.log(2))==(int)(Math.log(i)/Math.log(2)))
-				System.out.println(i);
-			else if((Math.log(i)/Math.log(3))==(int)(Math.log(i)/Math.log(3)))
-				System.out.println(i);
-			else if((Math.log(i)/Math.log(5))==(int)(Math.log(i)/Math.log(5)))
-				System.out.println(i);
-			else if((Math.log(i)/Math.log(2*3))==(int)(Math.log(i)/Math.log(2*3)))
-				System.out.println(i);
-			else if((Math.log(i)/Math.log(2*5))==(int)(Math.log(i)/Math.log(2*5)))
-				System.out.println(i);
-			else if((Math.log(i)/Math.log(3*5))==(int)(Math.log(i)/Math.log(3*5)))
-				System.out.println(i);
-	   
-		}
+//		int x=0;
+//		for(int i=0;i<100;i++)
+//		{
+//			//第一个全为2
+//			//判断其是否是整数
+//			if((Math.log(i)/Math.log(2*3*5))==(int)(Math.log(i)/Math.log(2*3*5)))
+//				System.out.println(i);
+//			else if((Math.log(i)/Math.log(2))==(int)(Math.log(i)/Math.log(2)))
+//				System.out.println(i);
+//			else if((Math.log(i)/Math.log(3))==(int)(Math.log(i)/Math.log(3)))
+//				System.out.println(i);
+//			else if((Math.log(i)/Math.log(5))==(int)(Math.log(i)/Math.log(5)))
+//				System.out.println(i);
+//			else if((Math.log(i)/Math.log(2*3))==(int)(Math.log(i)/Math.log(2*3)))
+//				System.out.println(i);
+//			else if((Math.log(i)/Math.log(2*5))==(int)(Math.log(i)/Math.log(2*5)))
+//				System.out.println(i);
+//			else if((Math.log(i)/Math.log(3*5))==(int)(Math.log(i)/Math.log(3*5)))
+//				System.out.println(i);
+//	   
+//		}
+		int x=mtest.StrToInt("");
 		
+		System.out.println(x);
 		
 		
 		
