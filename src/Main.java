@@ -19,6 +19,7 @@ class TreeNode {
     int val = 0;
     TreeNode left = null;
     TreeNode right = null;
+    
 
     public TreeNode(int val) {
         this.val = val;
@@ -2360,6 +2361,300 @@ class StackTest {
      
      
      
+     //链表中环的入口节点
+     public ListNode EntryNodeOfLoop(ListNode pHead)
+     {
+         //设对应的值，首先是快慢指针法
+    	 //a,2a 然后相遇点肯定是在环中，所以，是 l+b=a, l+b+c=2*a
+    	 //所以环长度是a,然后从头往前头结点到达肯定是a-b,然后另一个环中节点肯定也是
+    	 //得到环中节点
+    	 ListNode N1=pHead;
+    	 ListNode N2=pHead;
+    	 ListNode N3=pHead;
+    	 
+    	 int circlecount=1;
+    	 int linecount=1;
+    	 int flag=0;
+    	 if(pHead==null)
+    		 return N1;
+    	 //第一次找到环长度和环内节点
+    	 //边界条件不同
+    	 while(N1!=null && N2.next!=null){
+    		 N1=N1.next;
+    		 N2=N2.next.next;
+    		 if(N1==N2){
+    			//得到环长度是circlecount;
+    	    	 //第二次找到环的入口节点和对应到入口节点的长度
+    	    	 while(N1!=N3){
+    	    		 N3=N3.next;
+    	    		 N1=N1.next;
+    	    		 linecount++;
+    	    	 }
+    	    	 if(N1==N3)
+    	    		 return N3;
+    		 }
+    		 circlecount++;
+    	 }
+    	 return null;
+    	 
+    	
+    	 
+     }
+     
+     
+     //删除开始和结尾的空格并将中间的空格合成一个
+     public static void FormatString(char str[], int len){
+//    	 //设两个指针，一个用于找，一个用于查
+//    	 int begin=0;
+//    	 int end=len-1;
+//         //删除开始的空格
+//    	 while(str[begin]==' ' && begin<len){
+//    		 begin++;
+//    	 }
+//    	 
+//    	//删除末尾的空格
+//    	 while(str[end]==' ' && end>0){
+//    		 end--;
+//    	 }
+//    	 
+//         //找中间的空格
+//    	 for(int i=begin;i<end;i++){
+//    		 //第一个不是空格
+//    		 while(str[i]!=' ')
+//    			 i++;
+//    		//记录第一个空格位置为 i
+//    	
+//    		
+//    	 }
+    	 int i=0,j=0;
+    	 while(str[i]==' '){
+    		 i++;
+    	 }
+    	 while(i<len-1){
+    		 //表明对应的str[i]是“ ” 但是str[i+1] 不是 “ ”
+    		 //复制是在i中开始复制的
+    		 if(str[i]==' ' && (i==len-1  || str[i+1]==' ')){
+    			 i++;
+    			 continue;
+    		 }
+    		 str[j++]=str[i++];
+    	 }
+    	 
+    	 for(int k=0;k<j;k++){
+    		 System.out.print(str[k]);
+    	 }
+     }
+     
+     //求两个二叉树的公共父节点！！！！
+//     //思路一：我们首先找到两个节点的高度差，然后从较靠近根结点的一层开始向上找，
+//     //若父节点为同一节点则该节点为解。
+//     
+//     public static int getHeight(TreeNode node){
+//    	 int height=0;
+//    	 while(node!=null){
+//    		 height++;
+//    		 node=node.father;
+//    	 }
+//    	 return height;
+//     }
+//     
+//     public static TreeNode LowestCommonAncestor(TreeNode first,TreeNode second) {
+//    	 int height1=getHeight(first), height=getHeight(second),diff=height1-height2;
+//    	 if(diff<0){
+//    		 diff=-diff;
+//    		 while(diff!=0){
+//    			 diff--;
+//    			 second=second.father;
+//    		 }
+//    	 }
+//    	 else{
+//    		 while(diff!=0){
+//    			 diff--;
+//    			 first=first.father;
+//    		 }
+//    	 }
+//    	 //这是为了保证first与second都在同一层里，
+//    	 //然后依次向上遍历得到最后的值
+//    	 while(first!=second){
+//    		 first=first.father;
+//    		 second=second.father;
+//    	 }
+//     }
+//     
+     
+     //动态规划问题 取最大获取的值！
+//     用自底向上的动态规划解决，几行代码就足够了。
+//     r[i][j]记录硬币序列是i到j的子问题，s[i][j]记录i到j的总额 .则有
+//     r[i][j] = max{v[i] + s[i][j] - v[i]  -  r[i + 1][j],  v[j] + s[i][j] - v[j] -  r[i][j - 1]}.
+//     = max{s[i][j]  -  r[i + 1][j],  s[i][j] - r[i][j - 1]}.
+      
+     //返回二叉树的下一个节点 中序遍历，递归实现
+     //TreeNode 有next
+     class TreeLinkNode {
+    	    int val;
+    	    TreeLinkNode left = null;
+    	    TreeLinkNode right = null;
+    	    TreeLinkNode next = null;
+
+    	    TreeLinkNode(int val) {
+    	        this.val = val;
+    	    }
+    	}
+     
+     public TreeLinkNode GetNext(TreeLinkNode pNode)
+     {
+    	 if(pNode==null)
+    		 return null;
+    	 //区分情况现节点位置
+    	 //是根节点时,判断是否有右孩子返回
+    	 if(pNode.next==null){
+    		 if(pNode.right==null)
+    			 return null;
+    		 else 
+    			 return GetBefore(pNode.right);   	  
+    	 }
+    	 //是左节点时，同理判断返回
+    	 else if(pNode.next.left==pNode){
+    		 if(pNode.right==null)
+        		 return pNode.next;
+        	 else{
+        		 return GetBefore(pNode.right);
+        	 }
+    	 }
+    	 //是右节点时
+    	 else{
+    		 if(pNode.right!=null){
+    			 return GetBefore(pNode.right);
+    		 }
+    		 //返回最近的父节点的根节点
+    		 else{
+    			 //判断父节点在树中的位置，判断左右边不同
+    			 //当前节点在上层树的左边返回上层-上层节点（即父节点的父节点）
+    			 //当前节点在上层树的右边就继续向上找父节点，且对应父节点不是父节点父节点的左节点
+    			 //同时考虑空值可能
+    			 ////没右子树，则找第一个当前节点是父节点左孩子的节点
+    			 while(pNode.next!=null){
+    				 if(pNode.next.next.left==pNode.next)
+    					 return pNode.next;
+    				 pNode=pNode.next;
+    			 }
+    			 return null;
+    		 }
+    			 
+    	 }
+     }
+      
+     public TreeLinkNode GetBefore(TreeLinkNode pNode)
+     {
+    	 if(pNode.left==null)
+    		 return pNode;
+    	 else
+    		 return GetBefore(pNode.left);
+     }
+     
+     
+     
+     
+     //走台阶问题
+     //此处不同在于不应用递归 算法复杂度过大！！！ 所以要用正向推导的方式！
+//     public int countWays(int n) {
+//         // write code here
+//    	 int sum=0;
+//    	 if(n<=1)
+//    		 return 0;
+//    	 sum=countWays2(n);
+//    	 return sum%1000000007;
+//     }
+//     
+//     public int countWays2(int n){
+//    	 if(n==2)
+//    		 return 1;
+//         else if(n==3)
+//             return 2;
+//    	 else
+//    		 return (countWays2(n-1)+countWays2(n-2))%1000000007;
+//     }
+     public int countWays(int n) {
+         // write code here
+    	 int[] sum=new int[n+1];
+    	 if(n<=1)
+    		 return 0;
+    	 else if(n==2)
+    		 return 1;
+    	 else if(n==3)
+    		 return 2;
+    	 else{
+    		 sum[2]=1;
+    		 sum[3]=2;
+    		 for(int i=4;i<n;i++){
+    			 sum[n]=(sum[n-1]+sum[n-2]);
+    		 }
+    	 }
+
+    	 return sum[n]%1000000007;
+     }
+     
+     
+     
+     //小球落到地面不跳！每次只跳一半
+     public int calcDistance(int A, int B, int C, int D) {
+         // write code here
+    	 //数学中的极限思维
+    	 return 3*(A+B+C+D);
+//    	 int sum=0;
+//    	
+//    	 boolean down=true;
+//    	 while(A>0){
+//    		 sum=sum+A;
+//    		 if(!down){
+//    			 down=true;
+//    		 }
+//    		 else{
+//    			 down=false;
+//    			 A=A/2;
+//    		 }
+//    	 }
+//    	 
+//    	 down=true;
+//    	 while(B>0){
+//    		 sum=sum+B;
+//    		 if(!down){
+//    			 down=true;
+//    		 }
+//    		 else{
+//    			 down=false;
+//    			 B=B/2;
+//    		 }
+//    	 }
+//    	 
+//    	 down=true;
+//    	 while(C>0){
+//    		 sum=sum+C;
+//    		 if(!down){
+//    			 down=true;
+//    		 }
+//    		 else{
+//    			 down=false;
+//    			 C=C/2;
+//    		 }
+//    	 }
+//    	 System.out.println(C);
+//    	 down=true;
+//    	 while(D>0){
+//    		 sum=sum+D;
+//    		 if(!down){
+//    			 down=true;
+//    		 }
+//    		 else{
+//    			 down=false;
+//    			 D=D/2;
+//    		 }
+//    	 }
+//         return sum;
+     }
+     
+     
+     
      
      
      
@@ -2486,11 +2781,13 @@ class StackTest {
 //				System.out.println(i);
 //	   
 //		}
-		int x=mtest.StrToInt("");
+		//int x=mtest.StrToInt("");
 		
-		System.out.println(x);
-		
-		
+		//System.out.println(x);
+//		ListNode h1=mtest.new ListNode(1);
+//		ListNode h2=mtest.EntryNodeOfLoop(h1);
+	
+		System.out.println(mtest.calcDistance(100, 90, 80, 70));
 		
 		
 		
