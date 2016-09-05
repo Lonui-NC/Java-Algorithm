@@ -1,4 +1,4 @@
-
+﻿
 import java.io.BufferedReader;
 import java.util.*;
 import java.io.File;
@@ -2653,6 +2653,168 @@ class StackTest {
 //         return sum;
      }
      
+     //价值最高的礼物 京东笔试题
+     public int getMost(int[][] board) {
+//         // write code here
+//    	 int max=0;
+//    	 int maxright=0;
+//    	 int maxdown=0;
+//    	 //求向右走的解
+//    	 maxright=getMost()
+    	 //动态规划思想
+    	 //每一次每个点取对应到达该点的最大值，要么是从上面过来的，要么是从下面过来的
+    	 //那么从最左边开始依次加值遍历得到最右下角的点就是最大值！
+    	 for(int i=0;i<board.length;i++)
+    		 for(int j=0;j<board[0].length;j++){
+    			 if(i==0&&j==0){
+    				 //如果是起点坐标，不做任何处理。
+    			 }else if(i==0){
+    				 //如果走在行的临界边，也就是第一行，那么他只能向右走
+                     //向右走的时候该点就要将后面的值加起来。
+    				 board[i][j]+=board[i][j-1];
+    			 }else if(j==0){
+    				 board[i][j]+=board[i-1][j];
+    			 }else{
+    				//核心点在这，除去两个临界边，剩下的就是既能向右走，也能向下走，
+                     //那么这时候就要考虑走到当前点的所有可能得情况，也就是走到当前点
+                     //各自路径的和是不是这些所有到达该点路径当中最大的了。
+                     //temup用来存储从该点上面走下来的最大路径和。
+                     //templeft用来存储从该点左边走过来的最大路径的和，
+    				 int temup=board[i-1][j];
+    				 int templeft=board[i][j-1];
+    				//这两者肯定只能选其一，进行比较，那个大，就把这个值加给当前点，
+                     //因为从一开始我们就进行了大小的比较，每一个点存储的都是到达当前点
+                     //的最大值。所以直到最后一个点为止，她的值就是当前最大值的和。只要返回
+                     //最后一个点的内容就可以了。
+    				 if(temup>templeft){
+    					 board[i][j]+=temup;
+    				 }
+    				 else{
+    					 board[i][j]+=templeft;
+    				 }
+    					 
+    			 }
+    			 
+    			 
+    		 }
+    	 	return board[board.length-1][board[0].length-1];
+     }
+     
+     
+     public int getInitial(int n) {
+         // write code here
+    	 int sum=0;
+    	 int left=0;
+    	 for(int i=0;i<n;i++){
+    		 //System.out.println(i+"; left:"+left);
+    		 //结束条件可以省略！！！！！！！！！！！！！！！！
+//    		 if(left>20)
+//    			 break;
+    		 if(sum==left)
+    			 sum=sum*n;
+    		 else{
+    			 if((sum*n)%(n-1)==0)
+    			 {
+    				 sum=(sum*n)/(n-1);
+    			 }
+    			 else{
+    				 left++;
+    				 sum=left;
+    				 i=-1;
+    				 continue;
+    			 }
+    		 }
+    		 sum+=1;
+    		 //System.out.println(i+"; sum:"+sum);
+    	 }
+    	return sum;
+    	 
+     }
+     
+     
+     //最小生成树
+     /*
+      * 最小生成树prim算法，加入最小邻接边生成最小生成树。
+      * 首先构造一个零图，选择一个初始点加入到集合中，
+      * 然后分别从原来顶点的集合中抽取一个顶点，
+      * 选择的标准是构造成的树的权值最小，
+      * 循序渐进最终生成一棵最小生成树
+      */
+     /**
+      * @author 刘雁冰
+      * @date 2015-02-13 20:23
+      */
+     
+     /*
+      * m:定义为无法到达的距离
+      * weight:邻接矩阵表,weight表示权值
+      * verNum:顶点的个数
+      * lowerW:到新集合的最小权值
+      * edge:存储到新集合的边
+      * checked:判定顶点是否被抽取的集合
+      */
+     
+     static int m=Integer.MAX_VALUE;
+     static int[][] weight={
+       {0, 0, 0, 0, 0, 0},  
+       {0, m, 6, 9, 5, 13},  
+       {0, 6, m, 6,7,8},  
+       {0, 9,6,m,9,3},  
+       {0, 5,7,9,m,3},  
+       {0,13,8,3,3,m}};
+     static int verNum=weight.length;
+     static int []lowerW=new int[verNum];
+     static int []edge=new int[verNum];
+     static boolean []checked=new boolean[verNum];
+     
+     public void prim(int n,int [][]w){
+    	 checked[1]=true;
+    	 
+    	 for(int i=1;i<=n;i++){//初始化顶点集合
+    		 lowerW[i]=w[1][i];
+    		 edge[i]=1;
+    		 checked[i]=false;
+    	 }
+    	 
+    	 //取当前树中最小的节点 和对应最小的带权路径
+    	 for(int i=1;i<=n;i++){
+    		 int min=Integer.MAX_VALUE;
+    		 int j=1;
+    		 for(int k=2;k<=n;k++){
+    			 if(lowerW[k]<min&&(!checked[k])){
+    				 min=lowerW[k];
+    				 j=k;
+    			 }
+    		 }
+    		 
+    		 //将最小的带权路径输入，并做标记
+    		 if(i<n)
+        		 System.out.println(j+"-->"+edge[j]);
+    		 checked[j]=true;
+    		 
+    		 for(int k=2;k<=n;k++){//根据新得到的节点求出最小的权值
+    			 if((w[j][k]<lowerW[k])&&(!checked[k])){
+    				 lowerW[k]=weight[j][k];
+    				 edge[k]=j;
+    			 }
+    		 }
+    		 
+    	 }
+    	 
+    	   
+    	 
+     }
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
      
      
      
@@ -2787,15 +2949,9 @@ class StackTest {
 //		ListNode h1=mtest.new ListNode(1);
 //		ListNode h2=mtest.EntryNodeOfLoop(h1);
 	
-		System.out.println(mtest.calcDistance(100, 90, 80, 70));
-		
-		
-		
-		
-		
-		
-		
-		
+		//System.out.println(mtest.calcDistance(100, 90, 80, 70));
+		//System.out.println(mtest.getInitial(3));
+		mtest.prim(verNum-1, weight);
 	}
 	
 }
