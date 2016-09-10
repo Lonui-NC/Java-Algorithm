@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Stack;
 
+
 class TreeNode {
     int val = 0;
     TreeNode left = null;
@@ -2807,6 +2808,386 @@ class StackTest {
      
      
      
+   //按之字型打印二叉树！
+ 	/*按层序遍历分层打印的代码，添加一段判断用以倒序输出即可*/
+ 	public ArrayList<ArrayList<Integer> > Print(TreeNode pRoot) {
+ 		ArrayList<ArrayList<Integer>> result=new ArrayList<ArrayList<Integer>>();
+ 		if(pRoot==null){
+ 			return result;
+ 		}
+ 		boolean leftToRight=true;
+ 		//在java中队列的实现采用Linkedlist
+ 		//Queue<TreeNode> layer=new LinkedList<TreeNode>()
+ 		Queue<TreeNode> layer=new LinkedList<TreeNode>();
+ 		ArrayList<Integer> layerList=new ArrayList<Integer>();
+ 		layer.add(pRoot);
+ 		int start=0,end=1;
+ 		//layer.isEmpty()
+ 		while(!layer.isEmpty()){
+ 			TreeNode cur=layer.remove();
+ 			layerList.add(cur.val);
+ 			start++;
+ 			if(cur.left!=null){
+ 				layer.add(cur.left);
+ 			}
+ 			if(cur.right!=null){
+ 				layer.add(cur.right);
+ 			}
+ 			if(start==end){
+ 				//每次动态更新layer Queue中的长度！此时已经将上一层的释放出来
+ 				end=layer.size();
+ 				start=0;
+ 				//不是从左到右那么就翻转链表
+ 				if(!leftToRight){
+ 					result.add(reverse(layerList));
+ 				}
+ 				else{
+ 					result.add(layerList);
+ 				}
+ 				leftToRight=!leftToRight;
+ 				layerList=new ArrayList<Integer>();
+ 			}
+ 		}
+ 		return result;
+     }
+ 	
+     private ArrayList reverse(ArrayList<Integer> layerList){
+    	 int length=layerList.size();
+    	 ArrayList<Integer> reverseList=new ArrayList<Integer>();
+    	 for(int i=length-1;i>=0;i--){
+    		 reverseList.add(layerList.get(i));
+    	 }
+    	 return reverseList;
+     }
+     
+     
+     //机器人走过的路径！！！！！！请问该机器人能够达到多少个格子？
+     public int movingCount(int threshold, int rows, int cols)
+     {
+         int flag[][]=new int[rows][cols];//记录是否走过！
+         return helper(0,0,rows,cols,flag,threshold);
+     }
+     
+     //很明显返回值为1或0
+     private int helper(int i,int j,int rows,int cols,int [][]flag,int threshold){
+    	 if(i<0 || i>=rows || j<0 || j>=cols || flag[i][j]==1 || numSum(i)+numSum(j)>threshold)
+    		 return 0;
+    	 flag[i][j]=1;
+    	 //如果满足条件继续从这里走，深度搜索！
+    	 return helper(i+1,j,rows,cols,flag,threshold)+
+    			helper(i-1,j,rows,cols,flag,threshold)+
+    	 		helper(i,j+1,rows,cols,flag,threshold)+
+    	 		helper(i,j-1,rows,cols,flag,threshold)+
+    	 		1;
+     }
+     
+     private int numSum(int i){
+    	 int sum=0;
+    	 do{
+    		 sum+=i%10;
+    	 }while((i=i/10)>0);
+    	 return sum;
+     }
+     
+     
+     
+     //关于子序列问题
+     //1、最大子序列
+     //比较前面连续几项的值是不是小于0，如果不是小于0那么可以继续延伸扩展
+     //如果小于0表明当前的值是负数（在前一过程中会动态更新保留max用做比较）
+     //那么从当前的值下一个开始新的探索 i+1
+     
+     //2、最长递增子序列
+     //采用动态规划思想动态规划的思想，考虑{arr[0],...,arr[i]}的最长递增子序列时需要找到所有比arr[i]小的arr[j]，且j<i，结果应该是所有{arr[0],...,arr[j]}的最长递增子序列中最长的那一个再加1。即我们需要一个辅助的数组aid_arr，
+     //aid_arr[i]的值是{arr[0],...,arr[i]}的最长递增子序列的长度，aid_arr[0]=1。
+     //此时生成2个新数组，一个保留在对应i位置上的最大递增子序列长度
+     //vector<int> monoseqlen(len,1);
+     //vector<int> preindex(len,-1);
+     //另外1个保留该序列前一个下标，对应可以通过stack将序列打印出来
+     
+     //3、最长公共子串
+     //同样采用动态规划的思想
+     //我们采用一个二维矩阵来记录中间的结果。
+//     b　　a　　b
+//
+//     c　　0　　0　　0
+//
+//     a　　0　　1　　0
+//
+//     b　　1　　0　　1
+//
+//     a　　0　　1　　0
+//
+//     我们看矩阵的斜对角线最长的那个就能找出最长公共子串。
+//
+//     不过在二维矩阵上找最长的由1组成的斜对角线也是件麻烦费时的事，下面改进：当要在矩阵是填1时让它等于其左上角元素加1。
+//
+//     　　 b　　a　　b
+//
+//     c　　0　　0　　0
+//
+//     a　　0　　1　　0
+//
+//     b　　1　　0　　2
+//
+//     a　　0　　2　　0
+//
+//     这样矩阵中的最大元素就是 最长公共子串的长度。
+//
+//     在构造这个二维矩阵的过程中由于得出矩阵的某一行后其上一行就没用了，所以实际上在程序中可以用一维数组来代替这个矩阵。
+//     每次构造的过程中会动态更新max长度值以及对应最后一个字符串的列位置
+     //然后通过 string res=str1.substr(pos-maxele+1,maxele);截取即可
+//     3、最长公共子序列
+//
+//     最长公共子序列与最长公共子串的区别在于最长公共子序列不要求在原字符串中是连续的，比如ADE和ABCDE的最长公共子序列是ADE。
+//
+//     我们用动态规划的方法来思考这个问题如是求解。首先要找到状态转移方程：
+//
+//     符号约定，C1是S1的最右侧字符，C2是S2的最右侧字符，S1‘是从S1中去除C1的部分，S2'是从S2中去除C2的部分。
+//
+//     LCS(S1,S2)等于下列3项的最大者：
+//
+//     （1）LCS（S1，S2’）
+//
+//     （2）LCS（S1’，S2）
+//
+//     （3）LCS（S1’，S2’）--如果C1不等于C2； LCS（S1'，S2'）+C1--如果C1等于C2；
+//
+//     边界终止条件：如果S1和S2都是空串，则结果也是空串。
+//
+//     下面我们同样要构建一个矩阵来存储动态规划过程中子问题的解。这个矩阵中的每个数字代表了该行和该列之前的LCS的长度。与上面刚刚分析出的状态转移议程相对应，矩阵中每个格子里的数字应该这么填，它等于以下3项的最大值：
+//
+//     （1）上面一个格子里的数字
+//
+//     （2）左边一个格子里的数字
+//
+//     （3）左上角那个格子里的数字（如果 C1不等于C2）； 左上角那个格子里的数字+1（ 如果C1等于C2）
+//
+//     举个例子：
+//
+//      　　　　  G　　C　　T　　A
+//
+//     　　 0　　0　　0　　0　　0
+//
+//     G　 0　　1　　1　　1　　1
+//
+//     B　 0　　1　　1　　1　　1
+//
+//     T　 0　　1　　1　　2　　2
+//
+//     A    0　　1　　1　　2　　3
+//
+//     填写最后一个数字时，它应该是下面三个的最大者：
+//
+//     （1）上边的数字2
+//
+//     （2）左边的数字2
+//
+//     （3）左上角的数字2+1=3,因为此时C1==C2
+//
+//     所以最终结果是3。
+//
+//     在填写过程中我们还是记录下当前单元格的数字来自于哪个单元格，以方便最后我们回溯找出最长公共子串。有时候左上、左、上三者中有多个同时达到最大，那么任取其中之一，但是在整个过程中你必须遵循固定的优先标准。在我的代码中优先级别是左上>左>上。
+//     
+//     
+//     
+//     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     //美团笔试题 有一个长为n的数组A，求满足0≤a≤b<n的A[b]-A[a]的最大值。
+     public int getDis(int[] A, int n) {
+    	 //此时必须是有序的，即后面的比前面的大 所以不能简单排序
+//         // write code here
+//    	 //返回最大差值，排序后即可
+//    	 if(A.length==0 || A==null || n<=0)
+//    		 return 0;
+//    	 Arrays.sort(A);
+//    	 return A[A.length-1]-A[0];
+    	 //其实我感觉就是最大递增子序列！哈哈哈哈单其实并不是。。。。。
+    	 //最长递增子序列比的是长度这里比的是大小
+    	 int max=0;
+    	 if(A.length==0 || A==null || n<=0)
+    		 return 0;
+    	 for(int i=0;i<n;i++){
+    		 for(int j=i;j<n;j++){
+    			 if(A[j]>A[i]){
+    				 if(max<A[j]-A[i]){
+    					 max=A[j]-A[i];
+    				 }
+    			 }
+    		 }
+    	 }
+    	 return max;
+     }
+     
+     //翻转棋子
+     public int[][] flipChess(int[][] A, int[][] f) {
+         // write code here
+    	 //int [][]res=new int[A.length][A[0].length];
+    	 int x=1;
+    	 int y=1;
+    	 //肯定只有行与列，2
+    	 for(int i=0;i<f.length;i++){
+    		 x=f[i][0];
+    		 y=f[i][1];
+    		 //基础判断与筛选.考虑临界情况
+    		 //注意两次下标起始位置不一样
+    		 flip(A,x-1,y-1);
+    	 }
+    	 return A;
+     }
+     
+     public void flip(int[][] A,int x,int y){
+//    	 if(x>0 && x<A.length-1 && y>0 && y<A[0].length-1){
+//    		 A[x][y-1]=1-A[x][y-1];
+//    		 A[x][y+1]=1-A[x][y+1];
+//    		 A[x-1][y]=1-A[x-1][y];
+//    		 A[x+1][y]=1-A[x+1][y];
+//    	 }
+//    	 else if(x==0 && y==0){
+//    		 A[x][y+1]=1-A[x][y+1];
+//    		 A[x+1][y]=1-A[x+1][y];
+//    	 }
+//    	 else if(x==0){
+//    		 A[x][y-1]=1-A[x][y-1];
+//    		 A[x][y+1]=1-A[x][y+1];
+//    		 A[x+1][y]=1-A[x+1][y];
+//    	 }
+//    	 else if(y==0){
+//    		 A[x][y+1]=1-A[x][y+1];
+//    		 A[x-1][y]=1-A[x-1][y];
+//    		 A[x+1][y]=1-A[x+1][y];
+//    	 }
+//    	 else if(x==A.length-1 && y==A[0].length-1){
+//    		 A[x][y-1]=1-A[x][y-1];
+//    		 A[x-1][y]=1-A[x-1][y];
+//    	 }
+//    	 else if(x==A.length-1){
+//    		 A[x][y-1]=1-A[x][y-1];
+//    		 A[x][y+1]=1-A[x][y+1];
+//    		 A[x-1][y]=1-A[x-1][y];
+//    	 }
+//    	 else if(y==A[0].length-1){
+//    		 A[x][y-1]=1-A[x][y-1];
+//    		 A[x-1][y]=1-A[x-1][y];
+//    		 A[x+1][y]=1-A[x+1][y];
+//    	 }
+    	 //上面写的太烂了 直接判断即可
+    	 if(x>=0 && x<=A.length-1 && y-1>=0 && y-1<=A[0].length-1)
+    		 A[x][y-1]=1-A[x][y-1];
+    	 if(x>=0 && x<=A.length-1 && y+1>=0 && y+1<=A[0].length-1)
+    		 A[x][y+1]=1-A[x][y+1];
+    	 if(x-1>=0 && x-1<=A.length-1 && y>=0 && y<=A[0].length-1)
+    		 A[x-1][y]=1-A[x-1][y];
+    	 if(x+1>=0 && x+1<=A.length-1 && y>=0 && y<=A[0].length-1)
+    		 A[x+1][y]=1-A[x+1][y];
+     }
+     
+     
+     /**生产者消费者问题，涉及到几个类 
+      * 第一，这个问题本身就是一个类，即主类 
+      * 第二，既然是生产者、消费者，那么生产者类和消费者类就是必须的 
+      * 第三，生产什么，消费什么，所以物品类是必须的，这里是馒头类 
+      * 第四，既然是线程，那么就不是一对一的，也就是说不是生产一个消费一个，既然这样，多生产的往哪里放， 
+      *      现实中就是筐了，在计算机中也就是数据结构，筐在数据结构中最形象的就是栈了，因此还要一个栈类 
+      */  
+     
+     class ProduceConsume{
+    	 
+     }
+     
+     
+     /**
+      * 拜访问题 美团
+      * @param args
+      * @throws Exception
+      */
+     public int countPath(int[][] map, int n, int m) {
+         // write code here
+    	 //首先找出1和2的位置
+    	 int i,j;
+    	 int x1=0,x2=0,y1=0,y2=0;
+    	 for(i=0;i<n;i++){
+    		 for(j=0;j<m;j++){
+    			 if(map[i][j]==1){
+    				 x1=i;y1=j;
+    			 }else if(map[i][j]==2){
+    				 x2=i;y2=j;
+    			 }
+    		 }
+    	 }
+    	 if(x1==x2 && y1==y2){
+    		 //两点重合
+    		 return 1;
+    	 }
+    	 
+    	 if(x1>x2){//由于正反方向相同统一实现x1,y1用于存小坐标的值
+    		 x1=x1^x2^(x2=x1);
+    		 y1=y1^y2^(y2=y1);
+    	 }
+    	 
+    	 //数组使用动态规划实现值的递增
+    	 int dp[][]=new int[n][m];
+    	 if(y1<y2){//两点处在主对角线上
+    		 dp[x1][y1]=1;
+    		 //首先初始化边界线
+    		 for(i=x1+1;i<=x2;i++){
+    			 dp[i][y1]=map[i][y1]==-1?0:dp[i-1][y1];
+    		 }
+    		 for(j=y1+1;j<=y2;j++){
+    			 dp[x1][j]=map[x1][j]==-1?0:dp[x1][j-1];
+    		 }
+    		 for(i=x1+1;i<=x2;i++){
+    			 for(j=y1+1;j<=y2;j++){
+    				 dp[i][j]=map[i][j]==-1?0:dp[i-1][j]+dp[i][j-1];
+    			 }
+    		 }
+    	 }
+    	 else{
+    		 //如果处在副对角线上
+    		 dp[x1][y1]=1;
+    		 for(i=x1+1;i<=x2;i++){
+    			 dp[i][y1]=map[i][y1]==-1?0:dp[i-1][y1];
+    		 }
+    		 for(j=y1-1;j>=y2;j--){
+    			 dp[x1][j]=map[x1][j]==-1?0:dp[x1][j+1];
+    		 }
+    		 for(i=x1+1;i<=x2;i++){
+    			 for(j=y1-1;j>=y2;j--){
+    				 dp[i][j]=map[i][j]==-1?0:dp[i-1][j]+dp[i][j+1];
+    			 }
+    		 }
+    	 }	
+    	 return dp[x2][y2];
+    	 
+    	 
+     }
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
      
      
      
@@ -2951,7 +3332,16 @@ class StackTest {
 	
 		//System.out.println(mtest.calcDistance(100, 90, 80, 70));
 		//System.out.println(mtest.getInitial(3));
-		mtest.prim(verNum-1, weight);
+		//mtest.prim(verNum-1, weight);
+		int[][] A={{0,1,0,0},{1,0,1,0},{1,1,0,0},{1,0,0,1}};
+		int[][] f={{3,1},{3,1},{1,4}};
+		mtest.flipChess(A, f);
+		for(int i=0;i<A.length;i++){
+			for(int j=0;j<A[0].length;j++){
+				System.out.print(A[i][j]+" ");
+			}
+			System.out.println();
+		}
 	}
 	
 }

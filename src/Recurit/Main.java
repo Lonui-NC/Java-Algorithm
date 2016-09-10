@@ -297,15 +297,74 @@ public class Main {
 	}
 	
 	
+	//Lucky Num 
+	//巧妙方法 在本地或提前跑完所有信息 然后存到数组里面 再进行O(n) 遍历！！！！！！！！！！！！！！
+	public void Lucky(){
+		Scanner sc=new Scanner(System.in);
+		while(sc.hasNext()){
+			int num=Integer.parseInt(sc.nextLine());
+			for(int i=0;i<num;i++){
+				int count=Integer.parseInt(sc.nextLine());
+				
+				if(count==1){
+					System.out.println(4);
+					continue;
+				}
+				if(count==2){
+					System.out.println(7);
+					continue;
+				}
+				int a=1;
+				while(Math.pow(2, a)-2<count){
+					a++;
+				}
+				count=(int)(count-Math.pow(2, a-1)+2);
+				count--;
+				StringBuilder sb=new StringBuilder();
+				//因为是倒着求的 所以再reverse
+				for(int j=0;j<a;j++){
+					int index=1<<j;
+					if((count&index)==0){
+						sb.append("4");
+					}
+					else{
+						sb.append("7");
+					}
+						
+				}
+				System.out.println(sb.reverse().toString());
+			}
+			
+			
+		}
+		
+		
+	}
 	
 	
-	
-	
-	
-	
-	
-	
-	
+	//函数表明字符串是不是数值
+	//编译原理的自动机
+	public boolean isNumeric(char[] str){
+		try{
+			double re = Double.parseDouble(new String(str));
+		}
+		catch (NumberFormatException e){
+			return false;
+		}
+		return true;
+	}
+//	
+//	//按之字型打印二叉树！
+//	/*按层序遍历分层打印的代码，添加一段判断用以倒序输出即可*/
+//	public ArrayList<ArrayList<Integer> > Print(TreeNode pRoot) {
+//		ArrayList<ArrayList<Integer>> result=new ArrayList<ArrayList<Integer>>();
+//		if(pRoot==null){
+//			return result;
+//		}
+//		boolean leftToRight=true;
+//		Queue<TreeNode> layer=new LinkedList<TreeNode>();
+//    }
+//	
 	
 	
 	
