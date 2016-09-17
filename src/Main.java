@@ -1,5 +1,6 @@
 ﻿
 import java.io.BufferedReader;
+import java.io.CharConversionException;
 import java.util.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -3175,27 +3176,255 @@ class StackTest {
      
      
      
+     //直方图内的最大矩形
+     //直接遍历即可
+     public int countArea(int[] A, int n) {
+         // write code here
+    	 int max=0;
+    	 int area=0;
+    	 int i,j,Lleft,Lright;
+    	 for(i=0;i<n;i++){
+    		 Lleft=0;
+    		 Lright=0;
+    		 //向右能延伸的长度
+    		 //可以等于
+    		 for(j=i;j<n;j++){
+    			 //System.out.println("test1:"+A[j]+","+A[i]+","+(A[j]>A[i]));
+    			 if(A[j]>=A[i])
+    				 Lright++;
+    			 else 
+    				 break;
+    		 }
+    		 //向左能延伸的长度
+    		 for(j=i-1;j>=0;j--){
+    			 if(A[j]>=A[i])
+    				 Lleft++;
+    			 else
+    				 break;
+    		 }
+    		 area=(Lleft+Lright)*A[i];
+    		 //System.out.println("A:"+area);
+    		 if(area>max)
+    			 max=area;
+    	 }
+    	 return max;
+     }
+     
+     
+     //字符串排序字典序
+     public void StringOrder(){
+    	 Scanner sc=new Scanner(System.in);
+    	 while(sc.hasNext()){
+    		 long result=0;//注意要用long
+    		 String begin=sc.next();
+    		 String end=sc.next();
+    		 int len1=sc.nextInt();
+    		 int len2=sc.nextInt();
+    		 int maxlen=begin.length()>end.length()?begin.length():end.length();
+    		 int minlen=begin.length()<end.length()?begin.length():end.length();
+    		 for(int i=0;i<maxlen;i++){
+    			 int distance;
+    			 //前面的只是比较字符长度
+    			 //距离 一个为abcde,一个为hij
+    			 //minlen=3; maxlen=5;
+    			 //使用排列组合递归求
+    			 if(i<minlen){
+    				 distance=end.charAt(i)-begin.charAt(i);
+    			 }
+    			 //类似进制递归计算 最后一位不存在默认为‘a’-1
+    			 else{
+    				 if(begin.length()>end.length()){
+    					 distance='a'-begin.charAt(i)-1;
+    				 }
+    				 else{
+    					 distance=end.charAt(i)-'a'+1;
+    				 }
+    					 
+    			 }
+    			 long now=0;
+    			 //计算字典序的进制
+    			 //后面的只计算到len2
+    			 //因为在len2后面的都是比len2长的，所以只计算到len2
+    			 for(int j=len1;j<=len2;j++){
+    				 //要去掉本身
+    				 //每一位有26个其实是倍数的关系
+    				 //从对应的递归位开始减为每一位代表的会有的长度值
+    				 //即对应的字符串值，对应的所有字符串递增值
+    				 if(j-i-1>=0){
+    					 //这里说明字典树只有在比他大一位的地方有变动
+    					 //下面才会覆盖掉小的len1和len2
+    					 //所以判断条件是j-i-1 而不是j-i
+    					 //所以是下面的情况
+    					 now=now+(long)Math.pow(26, j-i-1);
+    				 }
+    				 now=(now*distance)%1000007;
+    				 result+=now;
+    			 }
+    			 //最后返回减去自身
+    			 System.out.println(result-1);
+    		 }
+    	 }
+     }
+     
+     
+     //平均年龄
+     public void averOld(){
+    	 Scanner sc=new Scanner(System.in);
+    	 while(sc.hasNext()){
+    		 double w=sc.nextDouble();
+    		 double y=sc.nextDouble();
+    		 double x=sc.nextDouble();
+    		 int n=sc.nextInt();
+    		 while(n>0){
+    			 y=(y+1)*(1-x)+x*21;
+    			 n--;
+    		 }
+    		 System.out.println((int)Math.ceil(y));
+    	 }
+    	 
+     }
      
      
      
+     //用stack实现队列操作
+     class StackToQueue{
+    	 Stack<Integer> stack1=new Stack<Integer>();
+    	 Stack<Integer> stack2=new Stack<Integer>();
+    	 
+    	 public void add(int node){
+    		 stack1.push(node);
+    	 }
+    	 
+    	 //如果有新加入的暂存在stack1内也是有顺序的不用怕
+    	 public int remove(){
+    		 if(stack2.isEmpty()){
+    			 //如果stack2为空则stack1
+    			 while(!stack1.isEmpty()){
+    				 stack2.push(stack1.pop());
+    			 }
+    		 }
+    		 return stack2.pop();
+    	 }
+     }
      
      
+//     //霍夫曼编码
+//     1.将字符串转为字符数组，遍历统计每个字符出现的次数，放入hash表中
+//     2.创建节点TreeNode，放入一个优先队列
+//     3.构建哈夫曼树合并两个权重最小的节点，直到只剩下根节点root
+//     4.带着深度遍历树，计算长度和
+//     
+//     
+       public void HuffmanCode(){
+    	   Scanner input=new Scanner(System.in);
+    	   while(input.hasNext()){
+    		   String s=input.nextLine();
+    		   int result=hafuman(s);
+    		   System.out.println(result);
+    	   }
+    	   
+       }
+       
+       public static int hafuman(String s){
+    	   char[] chars=s.toCharArray();
+    	   //构件hash表存放每个字符串及出现次数
+    	   Map<Character,Integer> hash=new HashMap<>();
+    	   for(int i=0;i<chars.length;i++){
+    		   if(hash.containsKey(chars[i])){
+    			   hash.put(chars[i], hash.get(chars[i])+1);
+    		   }
+    		   else
+    		   {
+    			   hash.put(chars[i], 1);
+    		   }
+    	   }
+    	 //优先队列（最小推），每次能得到weigh最小的node
+    	   //优先队列可以主动设置权值
+    	   Queue<CodeNode> q=new PriorityQueue<>(hash.size(),new Comparator<CodeNode>(){
+    		   @Override
+    		   public int compare(CodeNode o1,CodeNode o2){
+    			   return Integer.compare(o1.weight, o2.weight);
+    		   }
+    		   
+    		   
+    	   });
+    	   
+    	   for(Map.Entry<Character, Integer> entry : hash.entrySet()){
+    		   q.offer(new CodeNode(entry.getValue(),entry.getKey()));
+    	   }
+    	   
+    	   while(q.size()>1){
+    		   //弹出两个最小的合并成1个node
+    		   CodeNode left=q.poll();
+    		   CodeNode right=q.poll();
+    		   CodeNode father=new CodeNode(left.weight+right.weight);
+    		   father.left=left;
+    		   father.right=right;
+    		   q.offer(father);
+    	   }
+    	   CodeNode root=q.poll();
+    	   return valLength(root,0);	   
+       }
+     
+       
+       public static int valLength(CodeNode node,int depth){
+    	   if(node==null)
+    		   return 0;
+    	   return (node.ch==null ? 0:node.weight)*depth+valLength(node.left,depth+1)+valLength(node.right,depth+1);
+       }
+       
+      static class CodeNode{
+    	  int weight;//权重
+    	  Character ch;//如果是初始字符，则ch为字符，如果是合并的，则为null
+    	  CodeNode left;
+    	  CodeNode right;
+    	  
+    	  public CodeNode(int weight){
+    		  this.weight=weight;
+    	  }
+    	  
+    	  public CodeNode(int weight,Character ch){
+    		  this.weight=weight;
+    		  this.ch=ch;
+    	  }
+    	  
+      }
      
      
+     //求取第奇位的数字
+      public void getOddNum(){
+    	  Scanner sc=new Scanner(System.in);
+    	  while(sc.hasNext()){
+    		  int n=sc.nextInt();
+    		  System.out.println(FindOdd(n,new LinkedList<Integer>(),true));
+    	  }
+    	  
+      }
      
      
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
+      public static int FindOdd(int n,LinkedList<Integer> init,boolean first){
+    	  LinkedList<Integer> li=new LinkedList<>();
+    	  if(n<=0)
+    		  return 0;
+    	  if(first==true){
+    		  for(int i=1;i<n;i+=2){
+        		  li.add(i);
+        	  }
+    	  }
+    	  else{
+    		  for(int i=1;i<init.size();i+=2){
+    			  li.add(init.get(i));
+    		  }
+    	  }
+    	  
+    	  if(li.size()==1){
+    		  return li.get(0);
+    	  }
+    	  else
+    		  return FindOdd(n,li,false);
+    	  
+    	  
+      }
      
      
      
@@ -3333,15 +3562,23 @@ class StackTest {
 		//System.out.println(mtest.calcDistance(100, 90, 80, 70));
 		//System.out.println(mtest.getInitial(3));
 		//mtest.prim(verNum-1, weight);
-		int[][] A={{0,1,0,0},{1,0,1,0},{1,1,0,0},{1,0,0,1}};
-		int[][] f={{3,1},{3,1},{1,4}};
-		mtest.flipChess(A, f);
-		for(int i=0;i<A.length;i++){
-			for(int j=0;j<A[0].length;j++){
-				System.out.print(A[i][j]+" ");
-			}
-			System.out.println();
-		}
+//		int[][] A={{0,1,0,0},{1,0,1,0},{1,1,0,0},{1,0,0,1}};
+//		int[][] f={{3,1},{3,1},{1,4}};
+//		mtest.flipChess(A, f);
+//		for(int i=0;i<A.length;i++){
+//			for(int j=0;j<A[0].length;j++){
+//				System.out.print(A[i][j]+" ");
+//			}
+//			System.out.println();
+//		}
+		Queue<Integer> q = new LinkedList<>();
+		LinkedList<Integer> li=new LinkedList<>();
+		ArrayList<Integer> ali=new ArrayList<>();
+		
+		int[] A={2,7,9,4,1};
+		System.out.println(mtest.countArea(A, 5));
+
+		
 	}
 	
 }
