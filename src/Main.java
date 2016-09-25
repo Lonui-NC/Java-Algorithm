@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Stack;
 
@@ -3108,6 +3109,86 @@ class StackTest {
      }
      
      
+     //单例模式敲一敲
+     //懒汉式等需要时再进行实例化
+//     class Singleton{
+//    	 private Singleton(){}
+//    	 private static Singleton single=null;
+//    	 //静态工厂方法
+//    	 //加一个对象锁
+//    	 //再加一个类锁
+//    	 public static synchronized Singleton getInstance(){
+//    			 synchronized(Singleton.class){
+//    				 if(single==null){
+//    					 single=new Singleton();
+//    			 }
+//    		 }
+//    		 return single;
+//    	 } 
+//     }
+     
+     
+       //饿汉式.饿汉式提前实例化，不会出现线程同步问题
+       static class Singleton1{
+    	   private Singleton1(){}
+    	   private static final Singleton1 single=new Singleton1();
+    	   //静态工厂方法
+    	   public static Singleton1 getInstance(){
+    		   return single;
+    	   }
+       }
+       
+       
+       public static void testall(){
+    	  Map<String,Integer> staff=new HashMap<String,Integer>();
+    	  staff.put("Hello0", 1);
+    	  for(int i=0;i<5;i++){
+    		  if(staff.containsKey("Hello"+i)){
+    			  staff.put("Hello"+i, staff.get("Hello"+i));
+    		  }else{
+    			  staff.put("Hello"+i, 1);
+    		  }
+    	  }
+    	  staff.remove("HAHAH");
+    	  for(Map.Entry<String, Integer> entry : staff.entrySet()){
+    		  String key=entry.getKey();
+    		  Integer value=entry.getValue();
+    		  System.out.println("Key:"+key+",Value:"+value);
+    	  }
+    	  Set<String> keys=staff.keySet();
+    	  Collection<Integer> values=staff.values();
+       }
+     
+       
+      //构造回文序列
+       public static void WY1(){
+    	   Scanner sc=new Scanner(System.in);
+    	   while(sc.hasNext()){
+    		   int times=0;
+    		   //int n
+    	   }
+       }
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
      /**
       * 拜访问题 美团
       * @param args
@@ -3426,7 +3507,143 @@ class StackTest {
     	  
       }
      
-     
+      //打印二维数组
+      /**
+       *  题意很简单，主要是边界的处理：
+       *   1. 沿着主对角线打印，所以每次打印之后x与y都要加1，直到x或y超出边界。
+       *   2. 每轮遍历的起始点，是遵循(0,n-1)...（0,0）...（n-1,0）。
+        *           也就是y先减小到0，然后x增加到n-1。所以遍历的终止条件是startX>=n。 *
+       **/
+      public int[] arrayPrint(int[][] arr,int n){
+//    	  int[] A=new int[n*n];
+//    	  int p=0;
+//    	  //连续对称放置
+//    	  for(int p1=n-1;p1>-1;p1--){
+//    		  for(int p2=0;p2<n-p1;p2++){
+//    			  A[p]=arr[p2][p1+p2];
+//    			  A[n*n-1-p]=arr[]
+//    		      p++;
+//    		  }
+//    	  }
+    	  int[] res=new int[n*n];
+    	  int index=0;
+    	  int startX=0;
+    	  int startY=n-1;
+    	  while(startX<n){
+    		  int x=startX;
+    		  int y=startY;
+    		  while(x<n&&y<n){
+    			  res[index++]=arr[x++][y++];
+    		  }
+    		  //两个方向的依次递减，取每一层的起点然后层次遍历
+    		  if(startY>0){
+    			  startY--;
+    		  }
+    		  else
+    			  startX++;
+    	  }
+    	  return res;
+    	  
+      }
+      
+      
+      //股票交易日
+    //简单说一下我的做题思路，
+      //其实我的原始思路是用二分法做，先把数组从中间分开，
+      //然后在两部分中分别找最大差值，然后保存最大差值进行相加
+      //完事之后，将中间的指针，也就是进行二分的指针向右移或者向左移
+      //又划分成了两部分，依次找最大差值，
+      //直到最后两个差值之和为最大值，返回最大值。
+      public int maxProfit(int[] prices, int n) {
+    	  int temp1=0,temp2=0,temp3=0,l=0;
+    	  //既然从中间划分两部分，之后又要在往前划分和往后划分，
+          //所以直接一开始就从最前面开始划分，将数组划分两部分
+    	  while(l<n){
+    		  //l变量用来划分数组
+              //第一个for循环寻找的最大差值，仅限于l变量之前。
+    		  for(int i=0;i<l+1;i++){
+    			  for(int j=i+1;j<l+1;j++){
+    				  if(prices[j]-prices[i]>temp1){
+    					  temp1=prices[j]-prices[i];
+    				  }
+    			  }
+    		  }
+    		  ////第二个for循环寻找的最大差值，仅限于l变量之后。
+    		  for(int i=l+1;i<n;i++){
+    			  for(int j=i+1;j<n;j++){
+    				  if(prices[j]-prices[i]>temp2){
+    					  temp2=prices[j]-prices[i];
+    				  }
+    			  }
+    		  }
+    		  //取前后两者差值最大之和
+    		  if(temp2+temp1>temp3){
+    			  temp3=temp2+temp1;
+    		  }
+    		  temp2=0;
+    		  temp1=0;
+    		  l++;
+    	  }
+    	  return temp3;
+      }
+      
+      
+      //深度搜索实现
+      static int n;
+      static int [][]adj;
+      static boolean vis[];
+      static int ans=Integer.MAX_VALUE;
+      public static void citypath(){
+    	  Scanner in=new Scanner(System.in);
+    	  while(in.hasNext()){
+    		  n=in.nextInt();
+    		  adj=new int[n][n];
+    		  vis=new boolean[n];
+    		  String rub=in.nextLine();
+    		  for(int i=0;i<n;i++){
+    			  String str=in.nextLine();
+    			  String[] line=str.split(",");
+    			  for(int j=0;j<n;j++){
+    				  adj[i][j]=Integer.parseInt(line[j]);
+    			  }
+    		  }
+    		  //把四个点都进行一遍深度搜索，然后暴力求解
+    		  for(int i=0;i<n;i++){
+    			  pathdfs(i,1,0);
+    		  }
+    		  System.out.println(ans);
+    	  }
+    	  
+      }
+      
+      static void pathdfs(int i,int len,int cost){
+    	  //每次内部的深度搜索都是通过第一个i来进行计数比较
+    	  if(len==n){
+    		  ans=Math.min(ans, cost);
+    		  return;
+    	  }
+    	  if(cost>=ans)
+    		  return;
+    	  vis[i]=true;//vis用于计数表明是否访问过
+    	  //这里的暴力破解会进行遍历所有的情况
+    	  //即使是里面的单次遍历也是会进行所有情况的比较
+    	  //包括对应所有的点和实现，从某点出发，接着下一个到完全不同的另一个点
+    	  //然后遍历所有情况实现
+    	  for(int j=0;j<n;j++){
+    		  if(j!=i && !vis[j]){
+    			  pathdfs(j,len+1,cost+adj[i][j]);
+    		  }
+    	  }
+    	  vis[i]=false;
+      }
+      
+      
+      
+      
+      
+      
+      
+      
      
      
      
