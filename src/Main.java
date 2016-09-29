@@ -3588,6 +3588,202 @@ class StackTest {
       }
       
       
+      //钓鱼比赛
+      public static void fish(){
+    	  Scanner sc=new Scanner(System.in);
+    	  while(sc.hasNext()){
+    		  String[] s1=sc.nextLine().split(" ");
+    		  int n=Integer.parseInt(s1[0]);
+    		  int m=Integer.parseInt(s1[1]);
+    		  int x=Integer.parseInt(s1[2]);
+    		  int y=Integer.parseInt(s1[3]);
+    		  int t=Integer.parseInt(s1[4]);
+    		  double ccp=0.00;
+    		  double ssp=0.00;
+    		  for(int i=1;i<=n;i++){
+    			  String[] s=sc.nextLine().split(" ");
+    			  for(int j=1;j<=m;j++){
+    				  double p=1-Double.parseDouble(s[j-1]);
+    				  if(i==x&&j==y){
+    					  ccp=p;
+    				  }
+    				  ssp+=p;
+    			  }
+    		  }
+    		  ssp/=(n*m);
+    		  if(ccp<ssp){
+    			  System.out.println("cc");
+    			  System.out.printf("%.2f\n",1-Math.pow(ccp, t));
+    		  }else if(ccp>ssp){
+                  System.out.println("ss");
+                  System.out.printf("%.2f\n", 1-Math.pow(ssp,t));
+              }else{
+                  System.out.println("equal");
+                  System.out.printf("%.2f\n", 1-Math.pow(ccp,t));
+              }
+    		  
+    	  }
+      }
+      
+      
+      //蘑菇阵，路径计算到达概率
+      public static void mushroom(){
+    	  Scanner sc=new Scanner(System.in);
+    	  while(sc.hasNext()){
+    		  int n=sc.nextInt();
+    		  int m=sc.nextInt();
+    		  int k=sc.nextInt();
+    		  boolean[][] map=new boolean[n][m];
+    		  //put mushroom
+    		  for(int i=0;i<k;i++){
+    			  int x=sc.nextInt()-1;
+    			  int y=sc.nextInt()-1;
+    			  map[x][y]=true;
+    		  }
+    		  //动态更新到达某一点的概率
+    		  double[][] cw=new double[n][m];
+    		  //所以一般有很多会动态初始化首行和首列
+    		  cw[0][0]=1;
+    		  for(int i=0;i<n;i++){
+    			  for(int j=0;j<m;j++){
+    				  if(map[i][j])
+        				  cw[i][j]=0;
+    				  else if(i==0 && j==0){
+    				  }
+    				  else{
+    					  	//考虑从左边和上边过来的情况
+    					  	//同时考虑边界，如果到了临界边只有一条路可走，概率为1
+    					   cw[i][j]=(j-1<0?0:(i+1<n?cw[i][j-1]*0.5:cw[i][j-1]))+(i-1<0?0:(j+1<m?cw[i-1][j]*0.5:cw[i-1][j])); 
+    				  }	  
+    			  }
+    			 
+    		  }
+    		  double res=cw[n-1][m-1];
+			  System.out.println(String.format("%.2f", res));
+    	  }
+      }
+      
+      
+      
+      
+      
+      
+      public static void Bags(){
+    	  Scanner scanner=new Scanner(System.in);
+    	  //考虑0值情况
+    	  while(scanner.hasNext()){
+        		  int messCount=scanner.nextInt();
+        		  Meal meal=new Meal(messCount,scanner.nextInt(),scanner.nextInt());
+        		  for(int j=0;j<messCount;j++){
+        			  int foodCount=scanner.nextInt();
+        			  Mess mess=new Mess(foodCount);
+        			  for(int t=0;t<foodCount;t++){
+        				  mess.allFood[t]=new Food(scanner.nextInt(),scanner.nextInt());
+        				  
+        			  }
+        			  meal.messes[j]=mess;
+        		  }  
+        		  System.out.println(meal.eat());
+    	  }
+      }
+      
+      
+      static class Food{
+    	  int price;
+    	  int joy;
+    	  public Food(int price,int joy){
+    		  this.price=price;
+    		  this.joy=joy;
+    	  }
+      }
+      
+     static class Mess{
+    	  int foodCount;
+    	  Food[] allFood;
+    	  public Mess(int count){
+    		  this.foodCount=count;
+    		  allFood=new Food[count];
+    	  }
+    	  
+    	  //背包问题递归算法
+    	  //动态规划
+    	  public int eat(int bot,int top){
+    		  //扩展桶，设置数组下标同桶的大小，直接用i表示对应重量不做其他，因为有0的可能
+    		  int[][] r=new int[foodCount][top+1];
+    		  for(int i=0;i<=top;i++){
+    			  if(i>=allFood[0].price){
+    				  r[0][i]=allFood[0].joy;
+    			  }
+    			  else
+    				  r[0][i]=0;
+    		  }
+    		  
+    		  for(int i=1;i<foodCount;i++){
+    			  for(int j=0;j<=top;j++){
+    				  //如果小于不便同上一行
+    				  if(j<allFood[i].price){
+    					  r[i][j]=r[i-1][j];
+    				  }else{
+    					  r[i][j]=Math.max(r[i-1][j], r[i-1][j-allFood[i].price]+allFood[i].joy);
+    				  }
+    				  
+    			  }
+    		  }
+    		  
+    		  return r[foodCount-1][bot-1]==r[foodCount-1][top]? 0:r[foodCount-1][top];
+    		  
+    	  }
+    	  
+    	  
+      }
+      
+      
+      static class Meal{
+    	  Mess[] messes;
+    	  int bot;
+    	  int top;
+    	  
+    	  public Meal(int count,int bot,int top){
+    		  this.bot=bot;
+    		  this.top=top;
+    		  messes=new Mess[count];
+    	  }
+    	  
+    	  //Mess为对应食堂个数
+    	  public int eat(){
+    		  int enjoy=0;
+    		  for(int i=0;i<messes.length;i++){
+    			  int tmp=messes[i].eat(bot, top);
+    			  if(tmp>enjoy)
+    				  enjoy=tmp;
+    		  }
+    		  return enjoy;
+    	  }
+    	  
+      }
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
       //深度搜索实现
       static int n;
       static int [][]adj;
@@ -3638,6 +3834,94 @@ class StackTest {
       }
       
       
+      
+      //转移连续入狱的n名犯人
+      public static void GetPrison(){
+    	  Scanner sc=new Scanner(System.in);
+    	  while(sc.hasNext()){
+    		  int n=sc.nextInt();
+    		  int t=sc.nextInt();
+    		  int c=sc.nextInt();
+    		  int[] a=new int[n];
+    		  for(int i=0;i<n;i++){
+    			  a[i]=sc.nextInt();
+    		  }
+    		  //这里表明对应应该是连续的；
+    		  //其实也好做，每次递增差值即可
+    		  int count=0;
+    		  int tempt=0;
+    		  //获得初始值
+    		  for(int i=0;i<c;i++){
+    			  tempt+=a[i];
+    		  }
+    		  if(tempt<=t){
+    			  count++;
+    		  }
+    		  for(int i=c;i<a.length;i++){
+    			  tempt=tempt+a[i]-a[i-c];//依次加入一个新的，然后去掉最开始的
+    			  if(tempt<=t)
+    				  count++;
+    		  }
+    		  System.out.println(count);
+    		  
+    	  }
+    	  
+      }
+      
+//      如果一个类继承了一个接口，那它就要实现接口里面的所有方法。
+      //围城方格的面积
+      public static void Cirtangle(){
+    	  Scanner sc=new Scanner(System.in);
+    	  while(sc.hasNext()){
+    		  int n=sc.nextInt();
+    		  //因为要做取值和筛选，所以是反的
+    		  int maxX=Integer.MIN_VALUE;
+    		  int maxY=Integer.MIN_VALUE;
+    		  int minX=Integer.MAX_VALUE;
+    		  int minY=Integer.MAX_VALUE;
+    		  for(int i=0;i<n;i++){
+    			  int x=sc.nextInt();
+    			  int y=sc.nextInt();
+    			  maxX=(int)Math.max(maxX, x);
+    			  maxY=(int)Math.max(maxY, y);
+    			  minX=(int)Math.min(minX, x);
+    			  minY=(int)Math.min(minY, y);
+    		  }
+    		  int side=Math.max((maxX-minX), (maxY-minY));
+    		  System.out.println(side*side);
+    	  }
+      }
+      
+      
+      
+      
+      //水仙花数
+      public static void waterflower(){
+    	  int x=0;
+    	  for(int i=100;i<=999;i++){
+    		  int b=i/10;
+    		  int s=(i-100*b)/10;
+    		  int g=(i-s*10-b*100);
+    		  
+    		  if(i==g*g*g+s*s*s+b*b*b){
+    			  x++;
+    			  System.out.print(i+" ");
+    		  }
+    	  }
+    	  
+      }
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      //有向图中有无环
       
       
       
@@ -3788,13 +4072,14 @@ class StackTest {
 //			}
 //			System.out.println();
 //		}
-		Queue<Integer> q = new LinkedList<>();
-		LinkedList<Integer> li=new LinkedList<>();
-		ArrayList<Integer> ali=new ArrayList<>();
-		
-		int[] A={2,7,9,4,1};
-		System.out.println(mtest.countArea(A, 5));
-
+//		Queue<Integer> q = new LinkedList<>();
+//		LinkedList<Integer> li=new LinkedList<>();
+//		ArrayList<Integer> ali=new ArrayList<>();
+//		
+//		int[] A={2,7,9,4,1};
+//		System.out.println(mtest.countArea(A, 5));
+		//Main.mushroom();
+		Main.Bags();
 		
 	}
 	
