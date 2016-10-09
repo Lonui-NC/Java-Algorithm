@@ -3920,6 +3920,209 @@ class StackTest {
       
       
       
+      //像素翻转 编程金典 10/8
+      public int[][] transformImage(int[][] mat, int n) {
+          // write code here
+//    	  第一步：先将矩阵以次对角线互换 （如果是逆时针则为主对角线）
+//          	第二步：交换第i行到第n-i-1行
+//    	  
+    	  if(mat==null){
+    		  return null;
+    	  }
+    	  int temp=0;
+    	  //按照次对角线互换
+    	  for(int i=0;i<n-1;i++){
+    		  for(int j=0;j<n-i-1;j++){
+    			  temp=mat[i][j];
+    			  mat[i][j]=mat[n-j-1][n-i-1];
+    			  mat[n-j-1][n-i-1]=temp;
+    		  }
+    	  }
+    	  
+    	  for(int i=0;i<(n/2);++i){
+    		  for(int j=0;j<n;j++){
+    			  temp=mat[i][j];
+    			  mat[i][j]=mat[n-i-1][j];
+    			  mat[n-i-1][j]=temp;
+    		  }
+    	  }
+    	  
+    	  return mat;
+    	  
+    	  
+      }
+      
+      
+      //清除0元素所在的行和列
+      public int[][] clearZero(int[][] mat, int n) {
+          // write code here
+    	  boolean[] rowArray=new boolean[n];
+    	  boolean[] columnArray=new boolean[n];
+    	  
+    	  for(int i=0;i<n;i++){
+    		  for(int j=0;j<n;j++){
+    			  if(mat[i][j]==0){
+    				  rowArray[i]=true;
+    				  columnArray[j]=true;
+    			  }
+    		  }
+    	  }
+    	  
+    	  //
+    	  for(int i=0;i<n;i++){
+    		  for(int j=0;j<n;j++){
+    			  if(rowArray[i] || columnArray[j]){
+    				  mat[i][j]=0;
+    			  }
+    		  }
+    	  }
+    	  
+    	  return mat;
+    	  
+      }
+      
+      
+      
+      //编程金典，旋转子串
+      //如果一个串是另一个串旋转而成，那么它一定在
+//      以s1=ABCD为例，我们先分析s1进行循环移位之后的结果：
+//      ABCD->BCDA->CDAB->DABC->ABCD  .......
+//          假设我们把前面移走的数据进行保留：
+//    		  ABCD->ABCDA->ABCDAB->ABCDABC->ABCDABCD.....
+//    		  因此看出，对s1做循环移位，所得字符串都将是字符串s1s1的子字符串。
+//    		  如果s2可以由s1循环移位得到，则一定可以在s1s1上。
+      
+      public boolean checkReverseEqual(String s1, String s2) {
+          // write code here
+    	  //Java 中判断是否存在是用contains方法
+    	  if(s1.length()==0 || s2.length()==0 || s1.length()!=s2.length()){
+    		  return false;
+    	  }
+    	  String tem=s1+s1;
+    	  if(tem.contains(s2)){
+    		  return true;
+    	  }
+    	  else
+    		  return false;
+      }
+      
+      
+      //剑指offer Fianl wave！
+      /*
+      思路：只有当模式串和字符串同时等于\0，才可以认为两个串匹配。
+      在匹配中，对于每个位的匹配可以分为三种情况
+      1、（相应位匹配||模式串为.&&字符串不是\0）&&模式串下一位是*
+      2、（相应位匹配||模式串为.&&字符串不是\0）&&模式串下一位不是*
+      3、相应位不匹配&&（模式位不为.||字符串是\0）
+      对应1，最复杂。分为*取0，*取1，*>=2三种情况。
+      *取0对应跳过当前匹配位，继续寻找patter的下一个匹配位，str不变，pattern+2
+      *取1对应当前匹配位算一次成功匹配，str+1，pattern+2
+      *取>=2对应一次成功匹配，继续匹配字符串的下一位是否匹配，str+1，pattern不变
+      三者取或。即只要有一种情况能匹配成功认为字符串就是匹配成功的。
+      对应2，相当于一次成功匹配，str+1，pattern+1
+      对应3，匹配失败，直接返回false
+      */
+      //这里之所以考虑对应匹配1次是为了防止不匹配 类型 aa*ab，然后可能性为aaab,aaaab,aaaaab,
+      //即为了防止后面不对应
+      
+      
+      public boolean match(char[] str, char[] pattern)
+      {
+    	  if(str==null || pattern==null){
+    		  return false;
+    	  }
+    	  
+    	  int strIndex=0;
+    	  int patternIndex=0;
+    	  return matchCore(str,strIndex,pattern,patternIndex);
+      }
+      
+      public boolean matchCore(char[] str,int strIndex,char[] pattern,int patternIndex){
+    	 //有效性检查，长度分析，匹配对应
+    	  if(strIndex==str.length && patternIndex==pattern.length){
+    		  return true;
+    	  }
+    	  //pattern先到尾，匹配失败
+    	  if(strIndex!=str.length && patternIndex==pattern.length){
+    		  return false;
+    	  }
+    	  //递归方式，使用index实现模式串的匹配和递归
+    	  //如果对应的模式第二个字母是*，那么分三种方式
+    	  if(patternIndex+1<pattern.length && pattern[patternIndex+1]=='*'){
+    		  if((strIndex!=str.length && pattern[patternIndex]==str[strIndex] || (pattern[patternIndex]=='.' && strIndex!=str.length))){
+    			  return matchCore(str,strIndex,pattern,patternIndex+2) //不匹配，确认为0次
+    					 || matchCore(str,strIndex+1,pattern,patternIndex+2)//视作匹配1次
+    					 || matchCore(str,strIndex+1,pattern,patternIndex);//*匹配1次，但其实要继续匹配下去递归
+    		  }
+    		  else{
+    			  return matchCore(str,strIndex,pattern,patternIndex+2);//表明对应str不匹配，a* 可以直接移动2位
+    			  
+    		  }
+    	  }
+    	  
+    	  //模式第2个不是*，且字符串第1个跟模式第1个匹配，则都后移1位，否则直接返回false
+    	  if((strIndex!=str.length && pattern[patternIndex]==str[strIndex]) || (pattern[patternIndex]=='.' && strIndex!=str.length)){
+    		  return matchCore(str,strIndex+1,pattern,patternIndex+1);
+    	  }
+    	  return false;
+      }
+      
+      //序列化和反序列化二叉树
+//      把对象转换为字节序列的过程称为对象的序列化。
+//    　　把字节序列恢复为对象的过程称为对象的反序列化。
+      public int index=-1;
+      public String Serialize(TreeNode root){
+    	  StringBuffer sb=new StringBuffer();
+    	  if(root==null){
+    		  sb.append("#,");
+    		  return sb.toString();
+    	  }
+    	  sb.append(root.val+",");
+    	  sb.append(Serialize(root.left));
+		  sb.append(Serialize(root.right));
+		  return sb.toString();
+      }
+      
+      TreeNode Deserialize(String str){
+    	  index++;
+    	  int len=str.length();
+    	  if(index>=len){
+    		  return null;
+    	  }
+    	  String[] strr=str.split(",");
+    	  TreeNode node=null;
+    	  if(!strr[index].equals("#")){
+    		  node=new TreeNode(Integer.valueOf(strr[index]));
+    		  node.left=Deserialize(str);
+    		  node.right=Deserialize(str);
+    	  }
+    	  return node;
+      }
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
       
       //有向图中有无环
       
