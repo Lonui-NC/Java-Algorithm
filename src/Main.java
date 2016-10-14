@@ -2577,7 +2577,7 @@ class StackTest {
 //    	 else
 //    		 return (countWays2(n-1)+countWays2(n-2))%1000000007;
 //     }
-     public int countWays(int n) {
+     public int countWays2(int n) {
          // write code here
     	 int[] sum=new int[n+1];
     	 if(n<=1)
@@ -4103,12 +4103,154 @@ class StackTest {
       
       
       
+      //程序员面试金典，链表分割
+      public ListNode partition(ListNode pHead, int x) {
+          // write code here
+    	  //
+    	  if(pHead==null || pHead.next==null){
+    		  return pHead;
+    	  }
+    	  ListNode cur=pHead;
+    	  ListNode Shead=new ListNode(-1);
+    	  ListNode Bhead=new ListNode(-1);
+    	  ListNode Stemp=Shead;
+    	  ListNode Btemp=Bhead;
+    	  while(cur!=null){
+    		  if(cur.val<x){
+    			  Stemp.next=cur;
+    			  Stemp=Stemp.next;
+    		  }
+    		  else{
+    			  Btemp.next=cur;
+    			  Btemp=Btemp.next;
+    		  }
+    		  cur=cur.next;
+    	  }
+    	  Btemp.next=null;
+    	  Stemp.next=Bhead.next;
+    	  return Shead.next;
+      }
+      
+      
+      //链表A+B
+      public ListNode plusAB(ListNode a, ListNode b) {
+          // write code here
+//    	  本题的思路很简单，按照小学数学中学习的加法原理从末尾到首位，对每一位对齐相加即可。技巧在于如何处理不同长度的数字，以及进位和最高位的判断。
+//    	  这里对于不同长度的数字，我们通过将较短的数字补0来保证每一位都能相加。
+    	  ListNode resultHead=new ListNode(-1);
+    	  ListNode resultCurrent=resultHead;
+    	  int addToNextDigit=0;
+    	  while(a!=null || b!=null || addToNextDigit!=0){
+    		  int aVal=(a!=null ? a.val:0);
+    		  int bVal=(b!=null ? b.val:0);
+    		  
+    		  int sum=aVal+bVal+addToNextDigit;
+    		  int nodeDigit=sum%10;
+    		  addToNextDigit=sum/10;
+    		  
+    		  resultCurrent.next=new ListNode(nodeDigit);
+    		  resultCurrent=resultCurrent.next;
+    		  
+    		  a=(a!=null ? a.next:null);
+    		  b=(b!=null ? b.next:null);
+    		  
+    	  }
+    	  return resultHead.next;
+
+      }
       
       
       
+      //判断链表是否回文
+      //翻转链表比较是否相同
+      //快慢指针法比较，然后用栈来实现
+      
+      public boolean isPalindrome(ListNode pHead) {
+          // write code here
+    	  ListNode fast=pHead;
+    	  ListNode slow=pHead;
+    	  Stack<Integer> stack=new Stack<Integer>();
+    	  /**
+           * 将链表的前半部分元素装入栈中，当快速runner
+                   *（移动的速度是慢速runner的两倍）
+           * 到底链表尾部时，则慢速runner已经处于链表中间位置
+           */
+    	  while(fast!=null && fast.next!=null){
+    		  stack.push(slow.val);
+    		  slow=slow.next;
+    		  fast=fast.next.next;
+    	  }
+    	  //fast指向队尾
+    	  //当链表为奇数个时，跳过中间元素
+    	  if(fast!=null){
+    		  slow=slow.next;
+    	  }
+    	  while(slow!=null){
+    		  //如果不同，返回false
+    		  if(stack.pop()!=slow.val){
+    			  return false;
+    		  }
+    		  slow=slow.next;
+    	  }
+    	  return true;
+      }
       
       
+      //二分查找
+      public int getPos(int[] A, int n, int val) {
+          // write code here
+    	  if(n<=0 || A==null) return -1;
+    	  int mid=0,begin=0,end=n-1;
+    	  while(begin<end){
+    		  mid=begin+(end-begin)/2;
+    		  if(A[mid]>val){
+    			  end=mid-1;
+    		  }
+    		  else if(A[mid]<val){
+    			  begin=mid+1;
+    		  }
+    		  else{
+    			  end=mid;//这里这一步是为了找最左边第一次出现的
+    		  }
+    	  }
+    	  if(A[begin]==val)
+    		  return begin;
+    	  return -1;
+
+      }
       
+      //生成格雷码
+    //方法一：递归
+    //递归的思路就是n位gray码是由n-1位gray码生成，举个例子简单一些：
+    //比如求n=3的gray码，首先知道n=2的gray码是(00,01,11,10)
+    //那么n=3的gray码其实就是对n=2的gray码首位添加0或1生成的，添加0后变成(000,001,011,010)
+    //添加1后需要顺序反向就变成(110,111,101,100)
+    //组合在一起就是(000,001,011,010,110,111,101,100)
+      public String[] getGray(int n) {
+          // write code here
+    	  //其实认清楚规律后就是对应的反序
+    	  int m=1<<n;
+    	  //n位对应是2^n个
+    	  String[] r=new String[m];
+    	  if(n==1){
+    		  r[0]="0";
+    		  r[1]="1";
+    		  return r;
+    	  }
+    	  String[] temp=getGray(n-1);
+    	  int j=0;//对应肯定是如此的方式，i表示个数，对应为一半
+    	  for(int i=0;i<m;i++){
+    		  if(i<m/2){
+    			  r[i]="0"+temp[j++];
+    		  }
+    		  else{
+    			  r[i]="1"+temp[--j];
+    		  }
+    			  
+    	  }
+    	  return r;
+    	  
+      }
       
       
       
@@ -4125,6 +4267,465 @@ class StackTest {
       
       
       //有向图中有无环
+      
+      //Microsoft 1,2,3,4
+      //first edition
+//      public static void Shortening(){
+//    	  Scanner sc=new Scanner(System.in);
+//    	  while(sc.hasNext()){
+//    		  int len=sc.nextInt();
+//    		  String[] ins=sc.nextLine().split(" ");
+//    		  int sum=len;
+//    		  int[] nums=new int[len];
+//    		  for(int i=0;i<len;i++){
+//    			  nums[i]=Integer.parseInt(ins[i])%2;
+//    		  }
+//    		  int tempsum=sum;
+//    		  while(true){
+//    			  tempsum=sum;
+//    			  for(int i=0;i<len-1;i++){
+//        			  if(nums[i]!=2 && nums[i]+nums[i+1]==1){
+//        				 sum-=2;
+//        				 nums[i]=2;
+//        				 nums[i+1]=2;
+//        			  }
+//        		  }
+//    			  if(tempsum==sum){
+//    				  break;
+//    			  }
+//    		  }
+//    		  System.out.println(sum);
+//    	  }
+//      }
+      //version 2
+      
+      
+      
+      
+      
+//      public static void Shortening(){
+//    	  Scanner sc=new Scanner(System.in);
+//    	  while(sc.hasNext()){
+//    		  int len=Integer.parseInt(sc.nextLine());
+//    		  String[] ins=sc.nextLine().split(" ");
+//    		  int sum=len;
+//    		  List<Byte> nums=new ArrayList<Byte>();
+//    		  Byte previous=0;
+//    		  Byte now=0;
+//    		  Boolean hasPre=false;
+//    		  int listlen=0;
+//    		  for(int i=0;i<len;i++){
+//    			  if(!hasPre){
+//    				  previous=Byte.parseByte((1&Integer.parseInt(ins[i]))+"");
+//    				  if(i==len-1){
+//    					  nums.add(previous);//获取最后一个元素
+//    					  break;
+//    				  }
+//    				  hasPre=true;
+//    			  }
+//    			  else{
+//    				  now=Byte.parseByte((1&Integer.parseInt(ins[i]))+"");
+//    				  if(previous==now)
+//    				  {
+//    					  nums.add(previous);
+//    					  if(i==len-1){
+//    						  nums.add(now);//获取最后一个元素
+//    						  break;
+//    					  }
+//    					  previous=now;
+//    				  }
+//    				  else{
+//    					  hasPre=false;
+//    				  }
+//    				  //当且仅当前后顺序相同时加入
+//    			  }
+//    		  }
+//    		  
+//    		  sum=nums.size();
+//    		  int tempsum=sum;
+////    		  for(int i=0;i<nums.size();i++){
+////    			  System.out.println("nums:"+nums.get(i));
+////    		  }
+//    		  while(true){
+//    			  tempsum=sum;
+//    			  for(int i=0;i<nums.size()-1;i++){
+//    	        		 if(nums.get(i)!=nums.get(i+1))//mean odd here 0 1 两个不相等
+//    	        		 {
+//    	        		    //mind here the index substracts 2 
+//    	        			 //mind i+1 already changed here
+//    	        			 nums.remove(i);
+//    	        		     nums.remove(i);
+//    	        		     sum-=2;
+//    	        		     i--;
+//    	        		  }
+//    	        	  }
+//    			  if(tempsum==sum){
+//    				  break;
+//    			  }
+//    		  }
+//    		  System.out.println(sum);
+//    	  }
+//      }
+      
+      
+      	//now version 5  用stack实现
+      public static void Shortening(){
+    	  Scanner sc=new Scanner(System.in);
+    	  while(sc.hasNext()){
+    		  int len=Integer.parseInt(sc.nextLine());
+    		  String[] ins=sc.nextLine().split(" ");
+    		  int sum=0;
+    		  int now=0;
+    		  Stack<Integer> nums=new Stack<Integer>();
+    		  nums.add(1&Integer.parseInt(ins[0]));
+    		  int i=1;
+    		  for(i=1;i<len;i++){
+    			  now=1&Integer.parseInt(ins[i]);
+    			  if(!nums.empty()){
+    				  if(nums.peek()==now){
+        				  nums.add(now);
+        			  }
+        			  else{
+        				  nums.pop();
+        			  }
+    			  }
+    			  else{
+    				  nums.add(now);
+    			  }
+    		  }
+    		  System.out.println(nums.size());
+    	  }
+      }
+      
+      
+      //microsoft 2
+      public static void moveChar(){
+    	  Scanner sc=new Scanner(System.in);
+    	  while(sc.hasNext()){
+    		  int N=Integer.parseInt(sc.nextLine());
+    		  String text=sc.nextLine();
+    		  int M=Integer.parseInt(sc.nextLine());
+    		  String[] pattern=new String[M];
+    		  for(int i=0;i<M;i++){
+    			  pattern[i]=sc.nextLine();
+    		  }
+    		  //KMP判断是否有对应位置
+    		  for(int i=0;i<M;i++){
+    			  if(text.contains(pattern[i])){
+    				  text.indexOf(pattern[i]);
+    			  }
+    			  else{
+    				  
+    			  }
+    		  }
+    		  //
+    		  System.out.println(0);
+     	  }
+    	  
+      }
+      
+      
+      
+      
+      
+      //访问单个节点的删除
+      
+      public boolean removeNode(ListNode pNode) {
+          // write code here
+    	  if(pNode.next==null){
+    		  return false;
+    	  }
+    	  else{
+    		 //移除节点即可，，，傻了吧，，，
+    		  pNode.val=pNode.next.val;
+    		  pNode.next=pNode.next.next;
+    		  return true;
+    	  }
+    	  
+    	  
+      }
+      
+      //是否平衡二叉树
+      public boolean isBalance(TreeNode root) {
+          // write code here
+    	  int[] height={0};
+    	  return isBalance1(root,height);
+      }
+      
+      public boolean isBalance1(TreeNode root,int[] height){
+    	  if(root==null){
+    		  height[0]=0;
+    		  return true;
+    	  }
+    	  int[] lheight={0};
+    	  int[] rheight={0};
+    	  if(!isBalance1(root.left,lheight)||!isBalance1(root.right, rheight)){
+    		  return false;
+    	  }
+    	  if(lheight[0]-rheight[0]>1 || lheight[0]-rheight[0]<-1){
+    		  return false;
+    	  }
+    	  height[0]=(lheight[0]>rheight[0]?lheight[0]:rheight[0])+1;
+    	  return true;
+      }
+      
+      
+      //上楼梯，1,2,3, 递归实现
+      public int countWays(int n) {
+//          // write code here
+//    	  if(n<=0)
+//    		  return 0;
+//    	  if(n==1)
+//    		  return 1;
+//    	  else if(n==2)
+//    		  return 2;
+//    	  else if(n==3){
+//    		  return 4;
+//    	  }
+//    	  else{
+//    		  return ((countWays(n-1)+countWays(n-2))%1000000007+countWays(n-3))%1000000007;
+//    	  }
+//    	  \
+    	  
+    	  //还是学习用数组方式
+    	  long[] pre={1,2,4};
+    	  if(n<=0)
+    		  return 0;
+    	  else if(n<=3){
+    		  return (int)pre[n-1];
+    	  }
+    	  else{
+    		  for(int i=4;i<=n;i++){
+    			  long tmp=((pre[0]+pre[1])%1000000007+pre[2])%1000000007;
+    			  pre[0]=pre[1];
+    			  pre[1]=pre[2];
+    			  pre[2]=tmp;
+    		  }
+    	  }
+    	  return (int)pre[2];
+      }
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+//      // version 3
+      
+//      //version set
+//      import java.util.*;
+//      public class Main{
+//          public static void main(String[] args){
+//              Scanner sc=new Scanner(System.in);
+//          	  while(sc.hasNext()){
+//          		  int len=Integer.parseInt(sc.nextLine());
+//          		  String[] ins=sc.nextLine().split(" ");
+//          		  int sum=len;
+//          		  List<Byte> nums=new ArrayList<Byte>();
+//          		  for(int i=0;i<len;i++){
+//          			  nums.add(Byte.parseByte((1&Integer.parseInt(ins[i]))+""));
+//          		  }
+//          		  int tempsum=sum;
+//          		  while(true){
+//          			  tempsum=sum;
+//          			  for(int i=0;i<len-1;i++){
+//          	        		 if((nums.get(i)^nums.get(i+1))==1)//mean odd here
+//          	        		 {
+//          	        		    //mind here the index substracts 2 
+//          	        			 //mind i+1 already changed here
+//          	        			 nums.remove(i);
+//          	        		     nums.remove(i);
+//          	        		     sum-=2;
+//          	        		     len-=2;
+//          	        		     i--;
+//          	        		  }
+//          	        	  }
+//          			  if(tempsum==sum){
+//          				  break;
+//          			  }
+//          		  }
+//          		  System.out.println(sum);
+//          	  }
+//          }
+//      }
+//      
+//      
+//      
+//      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+//      public static void Shortening(){
+//    	  Scanner sc=new Scanner(System.in);
+//    	  while(sc.hasNext()){
+//    		  int len=Integer.parseInt(sc.nextLine());
+//    		  String[] ins=sc.nextLine().split(" ");
+//    		  int sum=len;
+//    		  List<Byte> nums=new ArrayList<Byte>();
+//    		  for(int i=0;i<len;i++){
+//    			  nums.add(Byte.parseByte((1&Integer.parseInt(ins[i]))+""));
+//    		  }
+//    		  int tempsum=sum;
+//    		  while(true){
+//    			  tempsum=sum;
+//    			  for (Iterator iter = nums.iterator(); iter.hasNext();) {
+//    				  
+//    				  
+//    			  }    	        	  
+//    			  if(tempsum==sum){
+//    				  break;
+//    			  }
+//    		  }
+//    		  System.out.println(sum);
+//    	  }
+//      }
+//      
+      
+      
+      
+      
+      /**
+       * 动态规划题目练习 100道！
+       * @param args
+       * @throws Exception
+       */
+      
+//      //动态规划，求对应最长公共子序列
+//      public static void longsequence(String s1,String s2){
+//    	  int len1=s1.length();
+//    	  int len2=s2.length();
+//    	  StringBuilder res=new StringBuilder();
+//    	  StringBuilder restemp=new StringBuilder();
+//    	  int index1=0;
+//    	  int index2=0;
+//    	  int max=0;
+//    	  int tempmax=0;
+//    	  while(true){
+//    		  if(s1.charAt(index1)==s2.charAt(index2)){
+//    			  tempmax++;
+//    		  }
+//    		  if(tempmax)
+//    		  
+//    		  
+//    		  
+//    		  if(index1==len1 || index2==len2){
+//    			  break;
+//    		  }
+//    	  }
+//    	  
+//    	  
+//    	  
+//      }
+//      
+//      
+//      
+      
+      //最长公共子序列
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
       
       
       
@@ -4282,8 +4883,8 @@ class StackTest {
 //		int[] A={2,7,9,4,1};
 //		System.out.println(mtest.countArea(A, 5));
 		//Main.mushroom();
-		Main.Bags();
-		
+		//Main.Bags();
+		Main.Shortening();
 	}
 	
 }
